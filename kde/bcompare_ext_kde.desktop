@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Compare/Merge Files or Directories with BeyondCompare
+X-KDE-Library=bcompare_ext_kde
+ServiceTypes=KFileItemAction/Plugin
+MimeType=application/octet-stream;inode/directory;

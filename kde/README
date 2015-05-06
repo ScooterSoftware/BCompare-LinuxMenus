@@ -1,0 +1,15 @@
+To Build:
+
+~> sudo apt-get install cmake
+~> sudo apt-get install g++
+~> sudo apt-get install kdelibs5-dev
+~> sudo apt-get install libkonq5-dev
+
+~> cmake .
+~> make
+
+*.so found in ./lib
+
+To Install:
+sudo cp ./lib/*.so /usr/lib/kde4/
+sudo cp *.desktop /usr/share/kde4/services

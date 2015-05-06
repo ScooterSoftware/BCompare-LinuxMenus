@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Service
+Name=bcompare_ext_konq
+Comment=
+Icon=de
+ServiceTypes=KonqPopupMenu/Plugin,inode/directory,application/octet-stream
+X-KDE-Library=bcompare_ext_konq

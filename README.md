@@ -14,7 +14,7 @@ Konqueror, Nautilus, and Thunar are all currently supported.  Tested Linux distr
 * Fedora 19, 20, 21
 * Debian 7, 8
 
-### Documentation for Building Plug-ins
+### Plug-in Documentation
 * KDE: <https://techbase.kde.org/Development/Tutorials/Services/Plugins>
 * Gnome: <https://developer.gnome.org/libnautilus-extension/>
 

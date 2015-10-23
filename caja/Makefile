@@ -36,12 +36,12 @@ $(EXT_NAME).so : $(OBJECTS)
 #  one file (the one appropriate for the host architecture).
 #
 install32: all
-	mkdir -p $(LIBDIR)/caja/extensions-3.0
-	cp $(EXT_NAME).i386.so $(LIBDIR)/caja/extensions-3.0/
+	mkdir -p $(LIBDIR)/caja/extensions-2.0
+	cp $(EXT_NAME).i386.so $(LIBDIR)/caja/extensions-2.0/
 
 install64: all
-	mkdir -p $(LIBDIR)/caja/extensions-3.0
-	cp $(EXT_NAME).amd64.so $(LIBDIR)/caja/extensions-3.0/
+	mkdir -p $(LIBDIR)/caja/extensions-2.0
+	cp $(EXT_NAME).amd64.so $(LIBDIR)/caja/extensions-2.0/
 
 clean:
 	rm -f *.o *.so

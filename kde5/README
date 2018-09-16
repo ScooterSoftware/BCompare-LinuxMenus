@@ -1,0 +1,11 @@
+To Build:
+
+~> cmake .
+~> make
+
+The bcompare_ext_kde5.so is found in ./
+
+To Install:
+~> sudo cp ./bcompare_ext_kde5.so /usr/lib/qt/plugins/kf5/kfileitemaction/
+
+The .desktop file must not be copied, this is a source file in order to generate a JSON file.

@@ -65,7 +65,8 @@ protected:
     QAction *createMenuItemSelectCenter(const CreateMenuCtx &ctx);
     QAction *createMenuItemEdit(const CreateMenuCtx &ctx);
     QAction *createMenuItemCompare(const CreateMenuCtx &ctx);
-    QAction *createMenuItemCompareUsing(const QString &fileViewer, const CreateMenuCtx &ctx);
+    QAction *createSubMenuItemCompareUsing(const QString &fileViewer, const CreateMenuCtx &ctx);
+    QAction *createMenuItemCompareUsing(const CreateMenuCtx &ctx);
     QAction *createMenuItemSync(const CreateMenuCtx &ctx);
     QAction *createMenuItemMerge(const CreateMenuCtx &ctx);
 

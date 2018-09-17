@@ -95,8 +95,8 @@ static bool getBoolSetting(const QSettings &settings, const char *key, bool defV
         {
             r = true;
         }
-        else if (   str.compare(QLatin1String("False"), Qt::CaseInsensitive) == 0
-                 || str == QLatin1String("0"))
+        else if (!r || str == QLatin1String("0")
+                 || str.compare(QLatin1String("False"), Qt::CaseInsensitive) == 0)
         {
             r = false;
         }
@@ -112,18 +112,13 @@ static BCompareConfig::MenuTypes getMenuTypeSetting(const QSettings &settings, c
     QVariant v = settings.value(QLatin1String(key));
     if (v.isValid())
     {
-        switch (v.toInt())
+        int i = v.toInt();
+        switch (i)
         {
             case BCompareConfig::MENU_NONE:
-                r = BCompareConfig::MENU_NONE;
-                break;
-
             case BCompareConfig::MENU_MAIN:
-                r = BCompareConfig::MENU_MAIN;
-                break;
-
             case BCompareConfig::MENU_SUBMENU:
-                r = BCompareConfig::MENU_SUBMENU;
+                r = static_cast<BCompareConfig::MenuTypes>(i);
                 break;
 
             default:

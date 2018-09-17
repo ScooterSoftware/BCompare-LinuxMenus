@@ -56,7 +56,7 @@ public:
         return m_menuEnabled;
     }
 
-    inline QStringList listViewer() const
+    inline const QStringList& listViewer() const
     {
         return m_listViewer;
     }

@@ -121,13 +121,24 @@ void BCompareKde5::cbMerge()
  * Menu Items
  *************************************************************/
 
-QAction *BCompareKde5::createMenuItem(const QString &txt, const QString &hint, bool isIconHalf,
-                                      void (BCompareKde5::*callback)())
+QAction *BCompareKde5::createMenuItem(const QString &txt, const QString &hint,
+                                      IconTypes iconType, void (BCompareKde5::*callback)())
 {
     QAction *item = new QAction(this);
     item->setText(txt);
     item->setToolTip(hint);
-    item->setIcon(isIconHalf ? m_config.menuIconHalf() : m_config.menuIconFull());
+
+    switch (iconType)
+    {
+        case ICON_FULL:
+            item->setIcon(m_config.menuIconFull());
+            break;
+        case ICON_HALF:
+            item->setIcon(m_config.menuIconHalf());
+            break;
+        default:
+            break;
+    }
 
     connect(item, &QAction::triggered, this, callback);
 
@@ -180,7 +191,7 @@ QAction *BCompareKde5::createMenuItemSelectLeft(const CreateMenuCtx &ctx)
         QString hintStr = i18n("Remembers selected item for later comparison using Beyond Compare. "
                                "Right-click another item to start the comparison");
 
-        return createMenuItem(menuStr, hintStr, true, &BCompareKde5::cbSelectLeft);
+        return createMenuItem(menuStr, hintStr, ICON_HALF, &BCompareKde5::cbSelectLeft);
     }
 
     return nullptr;
@@ -196,7 +207,7 @@ QAction *BCompareKde5::createMenuItemSelectCenter(const CreateMenuCtx &ctx)
         return createMenuItem(i18n("Select Center %1", itemStr),
                               i18n("Remembers selected item for later comparison using Beyond Compare. "
                                    "Right-click another item to start the comparison"),
-                              true, &BCompareKde5::cbSelectCenter);
+                              ICON_HALF, &BCompareKde5::cbSelectCenter);
     }
     return nullptr;
 }
@@ -209,7 +220,7 @@ QAction *BCompareKde5::createMenuItemEdit(const CreateMenuCtx &ctx)
                            i18nc("@bc edit menu", "Edit") : i18n("Edit with Beyond Compare");
 
         return createMenuItem(menuStr, i18n("Edit the file using Beyond Compare"),
-                              false, &BCompareKde5::cbEditFile);
+                              ICON_FULL, &BCompareKde5::cbEditFile);
     }
     return nullptr;
 }
@@ -235,7 +246,7 @@ QAction *BCompareKde5::createMenuItemCompare(const CreateMenuCtx &ctx)
 
     if (!menuStr.isEmpty())
     {
-        return createMenuItem(menuStr, hintStr, false, &BCompareKde5::cbCompare);
+        return createMenuItem(menuStr, hintStr, ICON_FULL, &BCompareKde5::cbCompare);
     }
     return nullptr;
 }
@@ -243,26 +254,21 @@ QAction *BCompareKde5::createMenuItemCompare(const CreateMenuCtx &ctx)
 QAction *BCompareKde5::createSubMenuItemCompareUsing(const QString &fileViewer,
                                                      const CreateMenuCtx &ctx)
 {
-    QString menuStr;
     QString hintStr;
 
     if (ctx.nbSelected == 1 && !m_pathLeftFile.isEmpty())
     {
-        menuStr = i18nc("@bc compare using to menu", "%1 to \"%2\"",
-                        fileViewer, QFileInfo(m_pathLeftFile).fileName());
-
         hintStr = i18n("Compare selected item with previously selected left item, "
-                        "using Beyond Compare %1", fileViewer);
+                       "using Beyond Compare");
     }
     else if (ctx.nbSelected == 2)
     {
-        menuStr = fileViewer;
         hintStr = i18n("Compare selected items using Beyond Compare");
     }
 
-    if (!menuStr.isEmpty())
+    if (!hintStr.isEmpty())
     {
-        QAction *act = createMenuItem(menuStr, hintStr, false, &BCompareKde5::cbCompare);
+        QAction *act = createMenuItem(fileViewer, hintStr, ICON_NONE, &BCompareKde5::cbCompare);
         act->setData(fileViewer);
         return act;
     }
@@ -287,7 +293,15 @@ QAction *BCompareKde5::createMenuItemCompareUsing(const CreateMenuCtx &ctx)
             QAction *subMenuAction = new QAction(this);
 
             subMenuAction->setMenu(subMenu);
-            subMenu->setTitle(i18n("Compare Using"));
+
+            if (ctx.nbSelected == 1 && !m_pathLeftFile.isEmpty())
+            {
+                subMenu->setTitle(i18n("Compare to \"%1\" Using", QFileInfo(m_pathLeftFile).fileName()));
+            }
+            else
+            {
+                subMenu->setTitle(i18n("Compare Using"));
+            }
             subMenu->setIcon(m_config.menuIconFull());
             subMenu->addActions(items);
 
@@ -320,7 +334,7 @@ QAction *BCompareKde5::createMenuItemSync(const CreateMenuCtx &ctx)
 
     if (!menuStr.isEmpty())
     {
-        return createMenuItem(menuStr, hintStr, false, &BCompareKde5::cbSync);
+        return createMenuItem(menuStr, hintStr, ICON_FULL, &BCompareKde5::cbSync);
     }
     return nullptr;
 }
@@ -368,7 +382,7 @@ QAction *BCompareKde5::createMenuItemMerge(const CreateMenuCtx &ctx)
 
     if (!menuStr.isEmpty())
     {
-        return createMenuItem(menuStr, hintStr, false, &BCompareKde5::cbMerge);
+        return createMenuItem(menuStr, hintStr, ICON_FULL, &BCompareKde5::cbMerge);
     }
     return nullptr;
 }

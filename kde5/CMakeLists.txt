@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.3)
 project (bcompare_ext_kde5)
 
 find_package(ECM REQUIRED NO_MODULE)
@@ -10,10 +10,15 @@ include(KDECMakeSettings)
 include(KDECompilerSettings)
 include(FeatureSummary)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 find_package(KF5 REQUIRED COMPONENTS KIO I18n CoreAddons)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
+
+add_definitions(-DQT_NO_CAST_TO_ASCII=1)
+add_definitions(-DQT_NO_CAST_FROM_BYTEARRAY=1)
+add_definitions(-DQT_NO_CAST_FROM_ASCII=1)
+add_definitions(-DTRANSLATION_DOMAIN="bcompare_ext_kde5")
 
 set(bcompare_ext_kde5_SRCS
     bcompare_ext_kde5.cpp
@@ -26,7 +31,6 @@ kcoreaddons_add_plugin(bcompare_ext_kde5
 
 kcoreaddons_desktop_to_json(bcompare_ext_kde5 bcompare_ext_kde5.desktop)
 
-target_compile_options(bcompare_ext_kde5 PUBLIC -Wall -Wextra -Wunused -Wcast-qual)
-target_compile_definitions(bcompare_ext_kde5 PUBLIC -DQT_NO_CAST_TO_ASCII=1 -DQT_NO_CAST_FROM_BYTEARRAY=1 -DQT_NO_CAST_FROM_ASCII=1)
-
 target_link_libraries(bcompare_ext_kde5 KF5::KIOWidgets KF5::I18n)
+
+ki18n_install(po)

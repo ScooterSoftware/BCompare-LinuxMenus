@@ -27,6 +27,65 @@
 #include <QFile>
 #include "bcompare_config.h"
 
+
+class BCompareIconCache
+{
+public:
+    const QIcon& iconEdit()
+    {
+        if (m_iconEdit.isNull())
+        {
+            m_iconEdit.addFile(QLatin1String(":/bcompare/icon/Edit32.png"));
+        }
+        return m_iconEdit;
+    }
+
+    const QIcon& iconFull()
+    {
+        if (m_iconFull.isNull())
+        {
+            m_iconFull.addFile(QLatin1String(":/bcompare/icon/Full32.png"));
+        }
+        return m_iconFull;
+    }
+
+    const QIcon& iconHalf()
+    {
+        if (m_iconHalf.isNull())
+        {
+            m_iconHalf.addFile(QLatin1String(":/bcompare/icon/Half32.png"));
+        }
+        return m_iconHalf;
+    }
+
+    const QIcon& iconMerge()
+    {
+        if (m_iconMerge.isNull())
+        {
+            m_iconMerge.addFile(QLatin1String(":/bcompare/icon/Merge32.png"));
+        }
+        return m_iconMerge;
+    }
+
+    const QIcon& iconSync()
+    {
+        if (m_iconSync.isNull())
+        {
+            m_iconSync.addFile(QLatin1String(":/bcompare/icon/Sync32.png"));
+        }
+        return m_iconSync;
+    }
+
+private:
+    QIcon m_iconEdit;
+    QIcon m_iconFull;
+    QIcon m_iconHalf;
+    QIcon m_iconMerge;
+    QIcon m_iconSync;
+};
+
+/****************************************************/
+
 const BCompareConfig& BCompareConfig::get()
 {
     static BCompareConfig m_cfg;
@@ -130,7 +189,8 @@ static BCompareConfig::MenuTypes getMenuTypeSetting(const QSettings &settings, c
 
 BCompareConfig::BCompareConfig() :
     m_menuEnabled(false), m_menuCompare(MENU_NONE), m_menuCompareUsing(MENU_NONE),
-    m_menuMerge(MENU_NONE), m_menuSync(MENU_NONE), m_menuEdit(MENU_NONE)
+    m_menuMerge(MENU_NONE), m_menuSync(MENU_NONE), m_menuEdit(MENU_NONE),
+    m_icons(new BCompareIconCache())
 {
     QString menuIniPath;
     QDir cfgDir = findMenuConfigPath(menuIniPath);
@@ -151,12 +211,6 @@ BCompareConfig::BCompareConfig() :
 
             m_listArchiveExt = menuSettings.value(QLatin1String("ArchiveMasks")).toStringList();
             m_listViewer     = menuSettings.value(QLatin1String("Viewers")).toStringList();
-
-            QDir iconDir = menuSettings.value(QLatin1String("IconPath"),
-                                              QLatin1String("/usr/share/pixmaps/")).toString();
-
-            m_iconFull = QIcon(iconDir.absoluteFilePath(QLatin1String("bcomparefull32")));
-            m_iconHalf = QIcon(iconDir.absoluteFilePath(QLatin1String("bcomparehalf32")));
 
             m_pathSaveLeftFilePath = cfgDir.absoluteFilePath(QLatin1String("left_file"));
             m_pathSaveCenterFilePath = cfgDir.absoluteFilePath(QLatin1String("center_file"));
@@ -230,4 +284,29 @@ void BCompareConfig::savePathCenterFile(const QString &path) const
 void BCompareConfig::forgetCenterFile() const
 {
     QFile::remove(m_pathSaveCenterFilePath);
+}
+
+const QIcon& BCompareConfig::iconEdit() const
+{
+    return m_icons->iconEdit();
+}
+
+const QIcon& BCompareConfig::iconFull() const
+{
+    return m_icons->iconFull();
+}
+
+const QIcon& BCompareConfig::iconHalf() const
+{
+    return m_icons->iconHalf();
+}
+
+const QIcon& BCompareConfig::iconMerge() const
+{
+    return m_icons->iconMerge();
+}
+
+const QIcon& BCompareConfig::iconSync() const
+{
+    return m_icons->iconSync();
 }

@@ -37,12 +37,6 @@ public:
     virtual QList<QAction*> actions(const KFileItemListProperties &fileItemInfos,
                                     QWidget *parentWidget) Q_DECL_OVERRIDE;
 
-    typedef enum {
-        ICON_NONE = 0,
-        ICON_HALF = 1,
-        ICON_FULL = 2
-    } IconTypes;
-
 protected slots:
     /* Action callbacks */
     void cbSelectLeft();
@@ -59,7 +53,7 @@ protected:
 
     /* Menu Items */
     QAction *createMenuItem(const QString &txt, const QString &hint,
-                            IconTypes iconType, void (BCompareKde5::*callback)());
+                            const QIcon &icon, void (BCompareKde5::*callback)());
 
     struct CreateMenuCtx {
         bool isDir;

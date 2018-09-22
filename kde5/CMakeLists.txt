@@ -20,9 +20,12 @@ add_definitions(-DQT_NO_CAST_FROM_BYTEARRAY=1)
 add_definitions(-DQT_NO_CAST_FROM_ASCII=1)
 add_definitions(-DTRANSLATION_DOMAIN="bcompare_ext_kde5")
 
+qt5_add_resources(bcompare_ext_kde5_QRC bcompare_icon.qrc OPTIONS -no-compress)
+
 set(bcompare_ext_kde5_SRCS
     bcompare_ext_kde5.cpp
-    bcompare_config.cpp)
+    bcompare_config.cpp
+    ${bcompare_ext_kde5_QRC})
 
 kcoreaddons_add_plugin(bcompare_ext_kde5
                        SOURCES ${bcompare_ext_kde5_SRCS}

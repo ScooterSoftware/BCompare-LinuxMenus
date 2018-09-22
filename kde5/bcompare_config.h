@@ -28,6 +28,8 @@
 #include <QString>
 #include <QIcon>
 
+class BCompareIconCache;
+
 class BCompareConfig
 {
 public:
@@ -86,15 +88,11 @@ public:
         return m_menuEdit;
     }
 
-    inline const QIcon& menuIconHalf() const
-    {
-        return m_iconHalf;
-    }
-
-    inline const QIcon& menuIconFull() const
-    {
-        return m_iconFull;
-    }
+    const QIcon& iconEdit() const;
+    const QIcon& iconFull() const;
+    const QIcon& iconHalf() const;
+    const QIcon& iconMerge() const;
+    const QIcon& iconSync() const;
 
 private:
     BCompareConfig();
@@ -123,17 +121,14 @@ private:
     /** Indicates the location of the "Edit" menu */
     MenuTypes m_menuEdit;
 
-    /** The icon to display in the menu in order to select the left file */
-    QIcon m_iconHalf;
-
-    /** The icon to display in the menu */
-    QIcon m_iconFull;
-
     /** The storage path to save the left file path */
     QString m_pathSaveLeftFilePath;
 
     /** The storage path to save the center file path */
     QString m_pathSaveCenterFilePath;
+
+    /** The icons cache */
+    BCompareIconCache *m_icons;
 };
 
 #endif // BCOMPARE_CONFIG_H

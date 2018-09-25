@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Compare/Merge files with BeyondCompare
+ServiceTypes=KFileItemAction/Plugin
+MimeType=application/octet-stream;inode/directory;
+Icon=bcomparefull32

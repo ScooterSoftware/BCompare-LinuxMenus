@@ -10,11 +10,8 @@
 #include <glib/gstdio.h>
 
 #include <thunarx/thunarx.h>
-#include "bcompare-submenu-thunarx.h"
 
 #define DIR_PERM (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)
-
-typedef GtkAction BcMenuItem;
 
 typedef enum {
 	MENU_NONE = 0,
@@ -129,7 +126,7 @@ static void spawn_bc(GtkWidget *window, char **argv)
 	}
 
 	if (g_spawn_async(NULL, argv, NULL,
-			G_SPAWN_FILE_AND_ARGV_ZERO | G_SPAWN_SEARCH_PATH, 
+			G_SPAWN_FILE_AND_ARGV_ZERO | G_SPAWN_SEARCH_PATH,
 			setup_display, display, NULL, &error) != TRUE) {
 		GtkWindow *parent;
 		GtkMessageDialog *dialog;
@@ -192,7 +189,7 @@ static gchar * thunarx_to_path(ThunarxFileInfo* file)
  * Action callbacks
  *
  *************************************************************/
-static void select_left_action(BcMenuItem *item, BCompareExt *bcobj)
+static void select_left_action(ThunarxMenuItem *item, BCompareExt *bcobj)
 {
 	GString *left_file;
 	FILE *fileptr;
@@ -212,7 +209,7 @@ static void select_left_action(BcMenuItem *item, BCompareExt *bcobj)
 	alert_updated(bcobj);
 }
 
-static void select_center_action(BcMenuItem *item, BCompareExt *bcobj)
+static void select_center_action(ThunarxMenuItem *item, BCompareExt *bcobj)
 {
 	GString *center_file;
 	FILE *fileptr;
@@ -232,7 +229,7 @@ static void select_center_action(BcMenuItem *item, BCompareExt *bcobj)
 	alert_updated(bcobj);
 }
 
-static void edit_file_action(BcMenuItem *item, BCompareExt *bcobj)
+static void edit_file_action(ThunarxMenuItem *item, BCompareExt *bcobj)
 {
 	GString *edit_file;
 	char *argv[5];
@@ -253,7 +250,7 @@ static void edit_file_action(BcMenuItem *item, BCompareExt *bcobj)
 	if (edit_file != NULL) g_string_free(edit_file, TRUE);
 }
 
-static void compare_action(BcMenuItem *item, BCompareExt *bcobj)
+static void compare_action(ThunarxMenuItem *item, BCompareExt *bcobj)
 {
 	GString *left_file, *right_file;
 	GString *msg = g_string_new("");
@@ -290,7 +287,7 @@ static void compare_action(BcMenuItem *item, BCompareExt *bcobj)
 	if (right_file != NULL) g_string_free(right_file, TRUE);
 }
 
-static void sync_action(BcMenuItem *item, BCompareExt *bcobj)
+static void sync_action(ThunarxMenuItem *item, BCompareExt *bcobj)
 {
 	GString *left_folder, *right_folder;
 	char *argv[6];
@@ -318,7 +315,7 @@ static void sync_action(BcMenuItem *item, BCompareExt *bcobj)
 	if (right_folder != NULL) g_string_free(right_folder, TRUE);
 }
 
-static void merge_action(BcMenuItem *item, BCompareExt *bcobj)
+static void merge_action(ThunarxMenuItem *item, BCompareExt *bcobj)
 {
 	GString *left_file, *right_file, *center_file;
 	char *argv[7];
@@ -358,11 +355,11 @@ static void merge_action(BcMenuItem *item, BCompareExt *bcobj)
  *
  *************************************************************/
 
-static BcMenuItem * select_left_mitem(
+static ThunarxMenuItem * select_left_mitem(
 		BCompareExt *bcobj,
 		gboolean IsDir)
 {
-	BcMenuItem *item;
+	ThunarxMenuItem *item;
 	GString *MenuStr = g_string_new("");
 	GString *HintStr = g_string_new("");
 	GString *ItemStr = g_string_new("");
@@ -383,10 +380,10 @@ static BcMenuItem * select_left_mitem(
 
 	g_string_assign(HintStr, "Remembers selected item for later comparison using Beyond Compare. Right-click another item to start the comparison");
 
-	item = gtk_action_new("BCompareExt::select_left",
-							   MenuStr->str,
-							   HintStr->str,
-							   "bcompare_stock_half");
+	item = thunarx_menu_item_new("BCompareExt::select_left",
+								 MenuStr->str,
+								 HintStr->str,
+								 "bcompare_stock_half");
 
 	g_signal_connect(item, "activate",
 		G_CALLBACK (select_left_action), bcobj);
@@ -401,14 +398,14 @@ static BcMenuItem * select_left_mitem(
 	return item;
 }
 
-static BcMenuItem * select_center_mitem(BCompareExt *bcobj)
+static ThunarxMenuItem * select_center_mitem(BCompareExt *bcobj)
 {
-	BcMenuItem *item;
+	ThunarxMenuItem *item;
 
-	item = gtk_action_new("BCompareExt::select_center",
-								  "Select Center File",
-								  "Remembers selected item for later comparison using Beyond Compare. Right-click another item to start the comparison",
-								  "bcompare_stock_half" /* icon name */);
+	item = thunarx_menu_item_new("BCompareExt::select_center",
+								 "Select Center File",
+								 "Remembers selected item for later comparison using Beyond Compare. Right-click another item to start the comparison",
+								 "bcompare_stock_half" /* icon name */);
 
 	g_signal_connect(item, "activate",
 			G_CALLBACK (select_center_action), bcobj);
@@ -417,9 +414,9 @@ static BcMenuItem * select_center_mitem(BCompareExt *bcobj)
 	return item;
 }
 
-static BcMenuItem * edit_file_mitem(BCompareExt *bcobj)
+static ThunarxMenuItem * edit_file_mitem(BCompareExt *bcobj)
 {
-	BcMenuItem *item;
+	ThunarxMenuItem *item;
 	GString *MenuStr = g_string_new("");
 
 	if (bcobj->EditMenuType == MENU_SUBMENU)
@@ -427,10 +424,10 @@ static BcMenuItem * edit_file_mitem(BCompareExt *bcobj)
 	else
 		g_string_printf(MenuStr, "Edit with Beyond Compare");
 
-	item = gtk_action_new("BCompareExt::edit_file",
-								  MenuStr->str,
-				  "Edit the file using Beyond Compare",
-								  "bcompare_stock_full" /* icon name */);
+	item = thunarx_menu_item_new("BCompareExt::edit_file",
+								 MenuStr->str,
+								 "Edit the file using Beyond Compare",
+								 "bcompare_stock_full" /* icon name */);
 
 	g_signal_connect(item, "activate",
 			G_CALLBACK (edit_file_action), bcobj);
@@ -440,12 +437,12 @@ static BcMenuItem * edit_file_mitem(BCompareExt *bcobj)
 	return item;
 }
 
-static BcMenuItem * compare_mitem(
+static ThunarxMenuItem * compare_mitem(
 		BCompareExt *bcobj,
 		gchar *fileviewer,
 		int SelectedCnt)
 {
-	BcMenuItem *item;
+	ThunarxMenuItem *item;
 	GString *MenuStr = g_string_new("");
 	GString *HintStr = g_string_new("");
 	GString *NameStr = g_string_new("");
@@ -473,10 +470,10 @@ static BcMenuItem * compare_mitem(
 
 	g_string_printf(NameStr, "BCompareExt::compare_using %s", fileviewer);
 
-	item = gtk_action_new(NameStr->str,
-								  MenuStr->str,
-								  HintStr->str,
-								  "bcompare_stock_full" /* icon name */);
+	item = thunarx_menu_item_new(NameStr->str,
+								 MenuStr->str,
+								 HintStr->str,
+								 "bcompare_stock_full" /* icon name */);
 	g_signal_connect(item, "activate",
 			G_CALLBACK (compare_action), bcobj);
 	g_object_set_data(
@@ -491,11 +488,11 @@ static BcMenuItem * compare_mitem(
 	return item;
 }
 
-static BcMenuItem * sync_mitem(
+static ThunarxMenuItem * sync_mitem(
 		BCompareExt *bcobj,
 		int SelectedCnt)
 {
-	BcMenuItem *item;
+	ThunarxMenuItem *item;
 	GString *MenuStr = g_string_new("");
 	GString *HintStr = g_string_new("");
 	gchar *LeftFolderName;
@@ -514,10 +511,10 @@ static BcMenuItem * sync_mitem(
 				"Sync two selected folders");
 	}
 
-	item = gtk_action_new("BCompareExt::sync",
-								  MenuStr->str,
-								  HintStr->str,
-								  "bcompare_stock_full" /* icon name */);
+	item = thunarx_menu_item_new("BCompareExt::sync",
+								 MenuStr->str,
+								 HintStr->str,
+								 "bcompare_stock_full" /* icon name */);
 	g_signal_connect(item, "activate",
 			G_CALLBACK (sync_action), bcobj);
 	g_object_set_data(
@@ -531,11 +528,11 @@ static BcMenuItem * sync_mitem(
 
 }
 
-static BcMenuItem * merge_mitem(
+static ThunarxMenuItem * merge_mitem(
 		BCompareExt *bcobj,
 		int SelectedCnt)
 {
-	BcMenuItem *item;
+	ThunarxMenuItem *item;
 	GString *MenuStr = g_string_new("");
 	GString *HintStr = g_string_new("");
 	gchar *File1, *File2;
@@ -580,10 +577,10 @@ static BcMenuItem * merge_mitem(
 	else return NULL;
 
 
-	item = gtk_action_new("BCompareExt::merge",
-								  MenuStr->str,
-								  HintStr->str,
-								  "bcompare_stock_full" /* icon name */);
+	item = thunarx_menu_item_new("BCompareExt::merge",
+								 MenuStr->str,
+								 HintStr->str,
+								 "bcompare_stock_full" /* icon name */);
 	g_signal_connect(item, "activate",
 			G_CALLBACK(merge_action), bcobj);
 	g_object_set_data(
@@ -615,7 +612,7 @@ static GList *beyondcompare_create_dir_menus(
 		MenuTypes CurrentMenuType)
 {
 	GList *items = NULL;
-	BcMenuItem *item;
+	ThunarxMenuItem *item;
 
 	if ((!FirstIsDir) || (SelectedCnt > 2)) return NULL;
 
@@ -648,8 +645,8 @@ static GList *beyondcompare_create_file_menus(
 		MenuTypes CurrentMenuType)
 {
 	GList *items = NULL;
-	BcMenuItem *item;
-	BCompareSubMenu *SubMenu;
+	ThunarxMenuItem *item;
+	ThunarxMenu *SubMenu;
 	int Cnt;
 
 	if ((FirstIsDir) || (SelectedCnt > 3)) return NULL;
@@ -668,16 +665,18 @@ static GList *beyondcompare_create_file_menus(
 			if (bcobj->CompareUsingMenuType == CurrentMenuType &&
 				(bcobj->ViewerCnt > 0)) {
 
-				SubMenu = bcompare_submenu_new("BeyondCompareExt::compareusing",
-										"Compare using",
-										"Select viewer type for compare",
-										"bcompare_stock_full");
+				item = thunarx_menu_item_new("BeyondCompareExt::compareusing",
+											 "Compare using",
+											 "Select viewer type for compare",
+											 "bcompare_stock_full");
+				SubMenu = thunarx_menu_new();
+				thunarx_menu_item_set_menu(item, SubMenu);
 
 				for (Cnt = 0; Cnt < bcobj->ViewerCnt; Cnt++) {
-					bcompare_submenu_action_add(SubMenu,
+					thunarx_menu_append_item(SubMenu,
 						compare_mitem(bcobj, bcobj->Viewers[Cnt], SelectedCnt));
 				}
-				items = g_list_append(items, SubMenu);
+				items = g_list_append(items, item);
 			}
 		}
 	}
@@ -712,7 +711,8 @@ static GList * beyondcompare_get_file_actions(
 					GList *files)
 {
 	BCompareExt *bcobj = (BCompareExt *)provider;
-	BCompareSubMenu *SubMenu;
+	ThunarxMenu *SubMenu;
+	ThunarxMenuItem *item;
 	GList *ret = NULL;
 	GList *tmp = NULL;
 	gchar leftfilepath[256];
@@ -801,19 +801,21 @@ static GList * beyondcompare_get_file_actions(
 	ret = g_list_concat(ret, tmp);
 
 	if (ret != NULL) {
-		SubMenu = bcompare_submenu_new("BeyondCompareExt::Top",
-								  "Beyond Compare",
-								  "Beyond Compare functions",
-								  "bcompare_stock_full");
+		item = thunarx_menu_item_new("BeyondCompareExt::Top",
+									 "Beyond Compare",
+									 "Beyond Compare functions",
+									 "bcompare_stock_full");
+		SubMenu = thunarx_menu_new();
+		thunarx_menu_item_set_menu(item, SubMenu);
 
 		for(; ret != NULL; ret = ret->next) {
-			bcompare_submenu_action_add(
-				SubMenu, (BcMenuItem *)(ret->data));
+			thunarx_menu_append_item(
+				SubMenu, (ThunarxMenuItem *)(ret->data));
 		}
 
 		g_list_free(ret);
 		ret = NULL;
-		ret = g_list_append(ret, SubMenu);
+		ret = g_list_append(ret, item);
 	}
 
 	tmp = beyondcompare_create_dir_menus(
@@ -959,7 +961,7 @@ static void
 beyondcompare_menu_provider_init(
 		ThunarxMenuProviderIface *iface)
 {
-	iface->get_file_actions = beyondcompare_get_file_actions;
+	iface->get_file_menu_items = beyondcompare_get_file_actions;
 }
 
 /* Registration function */

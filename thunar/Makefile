@@ -5,7 +5,7 @@
 #   sudo apt-get install libthunar-2-dev
 
 EXT_NAME=bcompare-ext-thunarx
-SOURCES=bcompare-thunarx.c bcompare-submenu-thunarx.c bcompare-submenu-thunarx.h
+SOURCES=bcompare-thunarx.c
 OBJECTS=$(filter %.o,$(SOURCES:.c=.o))
 
 LIBDIR=/usr/lib
@@ -15,7 +15,7 @@ FLAGS_64= -m64
 WFLAGS=-Wall -Wmissing-prototypes
 CFLAGS= $(WFLAGS) $(AFLAGS) -fPIC -g \
 	$(shell pkg-config --cflags glib-2.0) \
-	$(shell pkg-config --cflags thunarx-2)
+	$(shell pkg-config --cflags thunarx-3)
 LDFLAGS=-shared $(AFLAGS)
 
 all: ext32 ext64
@@ -34,11 +34,11 @@ $(EXT_NAME).so : $(OBJECTS)
 	mv $(EXT_NAME).so $(EXT_NAME).$(ARCHB).so
 
 install32: all
-	mkdir -p $(LIBDIR)/thunarx-1/
-	cp $(EXT_NAME).i386.so $(LIBDIR)/thunarx-1/
+	mkdir -p $(LIBDIR)/thunarx-3/
+	cp $(EXT_NAME).i386.so $(LIBDIR)/thunarx-3/
 
 install64: all
-	mkdir -p $(LIBDIR)/thunarx-1/
-	cp $(EXT_NAME).amd64.so $(LIBDIR)/thunarx-1/
+	mkdir -p $(LIBDIR)/thunarx-3/
+	cp $(EXT_NAME).amd64.so $(LIBDIR)/thunarx-3/
 clean:
 	rm -f *.o *.so

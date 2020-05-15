@@ -113,7 +113,12 @@ bcompare_stock_init (void)
 
 static void setup_display(gpointer data)
 {
-	g_setenv("DISPLAY", (char *)data, TRUE);
+	char* pDisplayName = (char*)data;
+
+	if(strstr(pDisplayName, "wayland") != NULL)
+		g_setenv("WAYLAND_DISPLAY",pDisplayName, TRUE);
+	else
+		g_setenv("DISPLAY", pDisplayName, TRUE);
 }
 
 static void spawn_bc(GtkWidget *window, char **argv)

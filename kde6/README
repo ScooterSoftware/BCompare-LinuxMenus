@@ -1,0 +1,13 @@
+To Build (tested on Arch Linux):
+
+~> cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF
+~> make
+
+Generated bcompare_ext_kde6.so is found in bin/kf6/kfileitemaction/
+It can be copied manually to /usr/lib/qt6/plugins/kf6/kfileitemaction/bcompare_ext_kde6.so
+
+To install directly on the system:
+~> sudo make install
+
+To "install" in a fakeroot in order to create a package:
+~> make DESTDIR="$pkgdir" install

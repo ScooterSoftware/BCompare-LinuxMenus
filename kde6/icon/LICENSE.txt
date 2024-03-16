@@ -1,2 +1,0 @@
-The images in the icon directory are not under MIT LICENSE.
-This images were gracefully provided by Scooter Software.

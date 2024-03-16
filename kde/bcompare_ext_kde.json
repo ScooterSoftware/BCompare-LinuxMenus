@@ -1,0 +1,14 @@
+{
+    "KPlugin": {
+        "Icon": "bcomparefull32",
+        "MimeTypes": [
+            "application/octet-stream",
+            "inode/directory"
+        ],
+        "Name": "Compare/Merge files with BeyondCompare",
+        "ServiceTypes": [
+            "KFileItemAction/Plugin"
+        ]
+    },
+    "MimeType": "application/octet-stream;inode/directory;"
+}

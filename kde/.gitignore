@@ -1,3 +1,14 @@
-build/
-*kdev4*
 scripts
+CMakeLists.txt.user
+CMakeFiles/
+CMakeCache.txt*
+*.cmake
+*.depends
+*.mo
+.qtc_clangd/
+qrc_*.cpp
+/Makefile
+/prefix.sh
+/Testing/
+/*_autogen/
+/bin/

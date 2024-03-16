@@ -20,19 +20,19 @@
  * SOFTWARE.
  */
 
-#ifndef BCOMPARE_EXT_KDE5_H
-#define BCOMPARE_EXT_KDE5_H
+#ifndef BCOMPARE_EXT_KDE_H
+#define BCOMPARE_EXT_KDE_H
 
 #include <KAbstractFileItemActionPlugin>
 #include <QList>
 #include "bcompare_config.h"
 
-class BCompareKde5 : public KAbstractFileItemActionPlugin
+class BCompareKde : public KAbstractFileItemActionPlugin
 {
     Q_OBJECT
 public:
-    BCompareKde5(QObject *pParent, const QVariantList &args);
-    virtual ~BCompareKde5();
+    BCompareKde(QObject *pParent, const QVariantList &args);
+    virtual ~BCompareKde();
 
     virtual QList<QAction*> actions(const KFileItemListProperties &fileItemInfos,
                                     QWidget *parentWidget) Q_DECL_OVERRIDE;
@@ -53,7 +53,7 @@ protected:
 
     /* Menu Items */
     QAction *createMenuItem(const QString &txt, const QString &hint,
-                            const QIcon &icon, void (BCompareKde5::*callback)());
+                            const QIcon &icon, void (BCompareKde::*callback)());
 
     struct CreateMenuCtx {
         bool isDir;
@@ -86,4 +86,4 @@ protected:
     QString m_pathRightFile;
 };
 
-#endif // BCOMPARE_EXT_KDE5_H
+#endif // BCOMPARE_EXT_KDE_H

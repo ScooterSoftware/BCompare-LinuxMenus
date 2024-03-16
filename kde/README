@@ -3,7 +3,7 @@ To Build (tested on Arch Linux):
 ~> cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF
 ~> make
 
-The bcompare_ext_kde5.so is found in ./
+The bcompare_ext_kde.so is found in ./
 It can be copied manually to /usr/lib/qt/plugins/kf5/kfileitemaction/
 
 The .desktop file must not be copied, this is a source file in order to generate a JSON file.

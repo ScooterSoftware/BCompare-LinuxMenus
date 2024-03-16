@@ -224,7 +224,8 @@ bool BCompareConfig::isFileArchive(const QString &pathFile) const
 {
     for (int i = 0; i < m_listArchiveExt.size(); ++i)
     {
-        if (pathFile.endsWith(m_listArchiveExt.at(i).midRef(1)))
+        const QString &ext = m_listArchiveExt.at(i);
+        if ((ext.length() > 0) && (pathFile.endsWith(ext.mid(1))))
         {
             return true;
         }

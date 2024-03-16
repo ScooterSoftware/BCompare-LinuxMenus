@@ -20,11 +20,17 @@
  * SOFTWARE.
  */
 
-#include <KCoreAddons/KPluginFactory>
+#include <KPluginFactory>
 #include <KFileItemListProperties>
 #include <KFileItem>
 #include <KLocalizedString>
+
+#ifdef DO_NOT_HAVE_COMMAND_LAUNCHER_JOB
 #include <KToolInvocation>
+#else
+#include <KIO/CommandLauncherJob>
+#endif
+
 #include <QAction>
 #include <QMenu>
 #include <QFileInfo>
@@ -38,11 +44,7 @@
 
 bool BCompareKde::isPathConsideredFolder(const QString &path) const
 {
-    if (!path.isEmpty() && (QFileInfo(path).isDir() || m_config.isFileArchive(path)))
-    {
-        return true;
-    }
-    return false;
+    return (!path.isEmpty() && (QFileInfo(path).isDir() || m_config.isFileArchive(path)));
 }
 
 void BCompareKde::clearSelections()
@@ -57,6 +59,17 @@ static void addItemToListIfNonNull(QList<QAction*> &items, QAction *item)
     {
         items.append(item);
     }
+}
+
+static void launchBcompare(const QStringList &args)
+{
+#ifdef DO_NOT_HAVE_COMMAND_LAUNCHER_JOB
+    KToolInvocation::kdeinitExec(QLatin1String("bcompare"), args);
+#else
+    auto *job = new KIO::CommandLauncherJob(QLatin1String("bcompare"), args);
+    job->setDesktopName(QLatin1String("bcompare"));
+    job->start();
+#endif
 }
 
 /*************************************************************
@@ -75,8 +88,7 @@ void BCompareKde::cbSelectCenter()
 
 void BCompareKde::cbEditFile()
 {
-    KToolInvocation::kdeinitExec(QLatin1String("bcompare"),
-                                 QStringList{ QLatin1String("-edit"), m_pathRightFile });
+    launchBcompare(QStringList{ QLatin1String("-edit"), m_pathRightFile });
     clearSelections();
 }
 
@@ -94,15 +106,14 @@ void BCompareKde::cbCompare()
             args.prepend(QString(QLatin1String("-fv=%1")).arg(viewer));
         }
 
-        KToolInvocation::kdeinitExec(QLatin1String("bcompare"), args);
+        launchBcompare(args);
         clearSelections();
     }
 }
 
 void BCompareKde::cbSync()
 {
-    KToolInvocation::kdeinitExec(QLatin1String("bcompare"),
-                                 QStringList{ m_pathLeftFile, m_pathRightFile });
+    launchBcompare(QStringList{ m_pathLeftFile, m_pathRightFile });
     clearSelections();
 }
 
@@ -113,7 +124,7 @@ void BCompareKde::cbMerge()
     {
         args.append(m_pathCenterFile);
     }
-    KToolInvocation::kdeinitExec(QLatin1String("bcompare"), args);
+    launchBcompare(args);
     clearSelections();
 }
 
@@ -490,9 +501,6 @@ QList<QAction*> BCompareKde::actions(const KFileItemListProperties &fileItemInfo
     return listActions;
 }
 
-K_PLUGIN_FACTORY_WITH_JSON(BCompareKdeFactory,
-                           "bcompare_ext_kde.json",
-                           registerPlugin<BCompareKde>();
-                          )
+K_PLUGIN_CLASS_WITH_JSON(BCompareKde, "bcompare_ext_kde.json")
 
 #include "bcompare_ext_kde.moc"

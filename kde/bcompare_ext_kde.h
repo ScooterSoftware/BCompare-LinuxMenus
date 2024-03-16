@@ -37,7 +37,7 @@ public:
     virtual QList<QAction*> actions(const KFileItemListProperties &fileItemInfos,
                                     QWidget *parentWidget) Q_DECL_OVERRIDE;
 
-protected slots:
+protected:
     /* Action callbacks */
     void cbSelectLeft();
     void cbSelectCenter();
@@ -46,7 +46,6 @@ protected slots:
     void cbSync();
     void cbMerge();
 
-protected:
     /* Utilities */
     bool isPathConsideredFolder(const QString &path) const;
     void clearSelections();

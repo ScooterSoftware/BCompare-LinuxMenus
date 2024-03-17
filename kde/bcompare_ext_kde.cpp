@@ -357,7 +357,7 @@ QAction *BCompareKde::createMenuItemMerge(const CreateMenuCtx &ctx)
 
             hintStr = i18n("Merge file with previously selected left and center files using Beyond Compare");
         }
-        if (ctx.nbSelected == 1 && !m_pathLeftFile.isEmpty())
+        else if (ctx.nbSelected == 1 && !m_pathLeftFile.isEmpty())
         {
             menuStr = i18nc("@bc merge with left menu", "Merge with \"%1\"",
                             QFileInfo(m_pathLeftFile).fileName());

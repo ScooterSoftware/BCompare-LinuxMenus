@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: bcompare_ext_kde\n"
-"Report-Msgid-Bugs-To: http://bugs.kde.org\n"
-"POT-Creation-Date: 2018-09-18 20:19+0200\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2024-03-17 16:30+0100\n"
 "PO-Revision-Date: 2018-09-18 20:50+0100\n"
 "Last-Translator: benjarobin <dev@benjarobin.fr>\n"
 "Language-Team: French <kde-i18n-doc@kde.org>\n"
@@ -17,190 +17,188 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: bcompare_ext_kde.cpp:169
+#: bcompare_ext_kde.cpp:173
 #, kde-format
 msgctxt "@bc compare action"
 msgid "Compare"
 msgstr "comparer"
 
-#: bcompare_ext_kde.cpp:174
+#: bcompare_ext_kde.cpp:178
 #, kde-format
 msgctxt "@bc merge action"
 msgid "Merge"
 msgstr "fusionner"
 
-#: bcompare_ext_kde.cpp:179
+#: bcompare_ext_kde.cpp:183
 #, kde-format
 msgctxt "@bc sync action"
 msgid "Sync"
 msgstr "synchroniser"
 
-#: bcompare_ext_kde.cpp:186 bcompare_ext_kde.cpp:204
+#: bcompare_ext_kde.cpp:190 bcompare_ext_kde.cpp:208
 #, kde-format
 msgctxt "@bc selected folder type"
 msgid "Folder"
 msgstr "dossier"
 
-#: bcompare_ext_kde.cpp:187 bcompare_ext_kde.cpp:205
+#: bcompare_ext_kde.cpp:191 bcompare_ext_kde.cpp:209
 #, kde-format
 msgctxt "@bc selected file type"
 msgid "File"
 msgstr "fichier"
 
-#: bcompare_ext_kde.cpp:189
+#: bcompare_ext_kde.cpp:193
 #, kde-format
 msgid "Select Left %1 for %2"
 msgstr "Sélectionner comme %1 de gauche à %2"
 
-#: bcompare_ext_kde.cpp:191 bcompare_ext_kde.cpp:208
+#: bcompare_ext_kde.cpp:195 bcompare_ext_kde.cpp:212
 #, kde-format
 msgid ""
 "Remembers selected item for later comparison using Beyond Compare. Right-"
 "click another item to start the comparison"
 msgstr ""
-"Se souvient de l'élément sélectionné pour une comparaison ultérieure en"
-" utilisant Beyond Compare. "
-"Clique-droit sur un autre élément pour commencer la comparaison"
+"Se souvient de l'élément sélectionné pour une comparaison ultérieure en "
+"utilisant Beyond Compare. Clique-droit sur un autre élément pour commencer "
+"la comparaison"
 
-#: bcompare_ext_kde.cpp:207
+#: bcompare_ext_kde.cpp:211
 #, kde-format
 msgid "Select Center %1"
 msgstr "Sélectionner comme %1 central"
 
-#: bcompare_ext_kde.cpp:220
+#: bcompare_ext_kde.cpp:224
 #, kde-format
 msgctxt "@bc edit menu"
 msgid "Edit"
 msgstr "Edition"
 
-#: bcompare_ext_kde.cpp:220
+#: bcompare_ext_kde.cpp:224
 #, kde-format
 msgid "Edit with Beyond Compare"
 msgstr "Edition avec Beyond Compare"
 
-#: bcompare_ext_kde.cpp:222
+#: bcompare_ext_kde.cpp:226
 #, kde-format
 msgid "Edit the file using Beyond Compare"
 msgstr "Edition du fichier avec Beyond Compare"
 
-#: bcompare_ext_kde.cpp:237
+#: bcompare_ext_kde.cpp:241
 #, kde-format
 msgctxt "@bc compare to menu"
 msgid "Compare to \"%1\""
 msgstr "Comparer à \"%1\""
 
-#: bcompare_ext_kde.cpp:238 bcompare_ext_kde.cpp:261
+#: bcompare_ext_kde.cpp:242 bcompare_ext_kde.cpp:265
 #, kde-format
 msgid ""
 "Compare selected item with previously selected left item, using Beyond "
 "Compare"
 msgstr ""
-"Comparer l'élément sélectionné avec le précédemment élément de gauche"
-" sélectionné, en utilisant Beyond Compare"
+"Comparer l'élément sélectionné avec le précédemment élément de gauche "
+"sélectionné, en utilisant Beyond Compare"
 
-#: bcompare_ext_kde.cpp:242
+#: bcompare_ext_kde.cpp:246
 #, kde-format
 msgctxt "@bc compare menu"
 msgid "Compare"
 msgstr "Comparer"
 
-#: bcompare_ext_kde.cpp:243 bcompare_ext_kde.cpp:266
+#: bcompare_ext_kde.cpp:247 bcompare_ext_kde.cpp:270
 #, kde-format
 msgid "Compare selected items using Beyond Compare"
 msgstr "Comparer les éléments sélectionnés en utilisant Beyond Compare"
 
-#: bcompare_ext_kde.cpp:299
+#: bcompare_ext_kde.cpp:302
 #, kde-format
 msgid "Compare to \"%1\" Using"
 msgstr "Comparer à \"%1\" en utilisant"
 
-#: bcompare_ext_kde.cpp:303
+#: bcompare_ext_kde.cpp:306
 #, kde-format
 msgid "Compare Using"
 msgstr "Comparer en utilisant"
 
-#: bcompare_ext_kde.cpp:323
+#: bcompare_ext_kde.cpp:326
 #, kde-format
 msgctxt "@bc sync with menu"
 msgid "Sync with \"%1\""
 msgstr "Synchroniser avec \"%1\""
 
-#: bcompare_ext_kde.cpp:326
+#: bcompare_ext_kde.cpp:329
 #, kde-format
 msgid "Sync to previously selected folder"
 msgstr "Synchroniser avec le dossier précédemment sélectionné"
 
-#: bcompare_ext_kde.cpp:330
+#: bcompare_ext_kde.cpp:333
 #, kde-format
 msgctxt "@bc sync menu"
 msgid "Sync"
 msgstr "Synchroniser"
 
-#: bcompare_ext_kde.cpp:331
+#: bcompare_ext_kde.cpp:334
 #, kde-format
 msgid "Sync two selected folders"
 msgstr "Synchroniser les 2 dossiers sélectionnés"
 
-#: bcompare_ext_kde.cpp:351
+#: bcompare_ext_kde.cpp:354
 #, kde-format
 msgctxt "@bc merge with left center menu"
 msgid "Merge with \"%1\", \"%2\""
 msgstr "Fusionner avec \"%1\", \"%2\""
 
-#: bcompare_ext_kde.cpp:355
+#: bcompare_ext_kde.cpp:358
 #, kde-format
 msgid ""
 "Merge file with previously selected left and center files using Beyond "
 "Compare"
 msgstr ""
-"Fusionner le fichier avec les fichiers gauche et central précédemment"
-" sélectionnés en utilisant Beyond Compare"
+"Fusionner le fichier avec les fichiers gauche et central précédemment "
+"sélectionnés en utilisant Beyond Compare"
 
-#: bcompare_ext_kde.cpp:359
+#: bcompare_ext_kde.cpp:362
 #, kde-format
 msgctxt "@bc merge with left menu"
 msgid "Merge with \"%1\""
 msgstr "Fusionner avec \"%1\""
 
-#: bcompare_ext_kde.cpp:362
+#: bcompare_ext_kde.cpp:365
 #, kde-format
 msgid "Merge file with previously selected left file using Beyond Compare"
 msgstr ""
-"Fusionner le fichier avec le fichier de gauche précédemment sélectionné en"
-" utilisant Beyond Compare"
+"Fusionner le fichier avec le fichier de gauche précédemment sélectionné en "
+"utilisant Beyond Compare"
 
-#: bcompare_ext_kde.cpp:366
+#: bcompare_ext_kde.cpp:369
 #, kde-format
 msgctxt "@bc merge with center menu"
 msgid "Merge with \"%1\""
 msgstr "Fusionner avec \"%1\""
 
-#: bcompare_ext_kde.cpp:369
+#: bcompare_ext_kde.cpp:372
 #, kde-format
 msgid "Merge selected files (left, right) with previously selected center file"
 msgstr ""
-"Fusionner les fichiers sélectionnés (gauche, droite) avec le fichier central"
-" précédemment sélectionné"
+"Fusionner les fichiers sélectionnés (gauche, droite) avec le fichier central "
+"précédemment sélectionné"
 
-#: bcompare_ext_kde.cpp:373 bcompare_ext_kde.cpp:378
+#: bcompare_ext_kde.cpp:376 bcompare_ext_kde.cpp:381
 #, kde-format
 msgctxt "@bc merge menu"
 msgid "Merge"
 msgstr "Fusionner"
 
-#: bcompare_ext_kde.cpp:374
+#: bcompare_ext_kde.cpp:377
 #, kde-format
 msgid "Merge selected files (left, right)"
 msgstr "Fusionner les fichiers sélectionnés (gauche, droite)"
 
-#: bcompare_ext_kde.cpp:379
+#: bcompare_ext_kde.cpp:382
 #, kde-format
 msgid "Merge selected files (left, right, center)"
 msgstr "Fusionner les fichiers sélectionnés (gauche, droite, central)"
 
-#: bcompare_ext_kde.cpp:490
+#: bcompare_ext_kde.cpp:495
 #, kde-format
 msgid "Beyond Compare"
 msgstr "Beyond Compare"
-
-

@@ -425,6 +425,8 @@ QList<QAction*> BCompareKde::actions(const KFileItemListProperties &fileItemInfo
     KFileItemList selectedFiles = fileItemInfos.items();
     int nbSelected = selectedFiles.size();
 
+    m_config.reloadMenuConfig();
+
     /* Do not handle more than 3 selected items */
     if (nbSelected <= 0 || nbSelected > 3 || !m_config.menuEnabled())
     {

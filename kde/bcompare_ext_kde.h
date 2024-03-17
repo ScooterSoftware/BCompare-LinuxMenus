@@ -73,7 +73,7 @@ protected:
 
 protected:
     /** A reference to the global configuration */
-    const BCompareConfig &m_config;
+    BCompareConfig &m_config;
 
     /** The path of the selected left file */
     QString m_pathLeftFile;

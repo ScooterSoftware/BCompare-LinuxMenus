@@ -27,15 +27,18 @@
 #include <QStringList>
 #include <QString>
 #include <QIcon>
+#include <QMutex>
+#include <QDateTime>
 
 class BCompareIconCache;
 
 class BCompareConfig
 {
 public:
-    /** Get a reference to the global configuration. In order to reload the configuration,
-     * Dolphin needs to be restarted */
-    static const BCompareConfig& get();
+    /** Get a reference to the global configuration */
+    static BCompareConfig& get();
+
+    void reloadMenuConfig();
 
     typedef enum {
         MENU_NONE = 0,
@@ -96,6 +99,22 @@ public:
 
 private:
     BCompareConfig();
+    void findMenuConfigPath();
+
+    /** Mutex protecting concurrent read of menu.ini */
+    QMutex m_mutex;
+
+    /** Last modified time of menu.ini, updated before reading file */
+    QDateTime m_menuIniDateTime;
+
+    /** Absolute path to menu.ini, empty if not found */
+    QString m_menuIniPath;
+
+    /** The storage path to save the left file path */
+    QString m_leftFileSavePath;
+
+    /** The storage path to save the center file path */
+    QString m_centerFileSavePath;
 
     /** Indicates if beyond compare is integrated in the file manager context menus */
     bool m_menuEnabled;
@@ -120,12 +139,6 @@ private:
 
     /** Indicates the location of the "Edit" menu */
     MenuTypes m_menuEdit;
-
-    /** The storage path to save the left file path */
-    QString m_pathSaveLeftFilePath;
-
-    /** The storage path to save the center file path */
-    QString m_pathSaveCenterFilePath;
 
     /** The icons cache */
     BCompareIconCache *m_icons;

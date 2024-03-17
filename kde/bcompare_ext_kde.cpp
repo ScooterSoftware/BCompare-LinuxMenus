@@ -25,7 +25,7 @@
 #include <KFileItem>
 #include <KLocalizedString>
 
-#ifdef DO_NOT_HAVE_COMMAND_LAUNCHER_JOB
+#ifdef USE_KDEINIT_EXE
 #include <KToolInvocation>
 #else
 #include <KIO/CommandLauncherJob>
@@ -63,7 +63,7 @@ static void addItemToListIfNonNull(QList<QAction*> &items, QAction *item)
 
 static void launchBcompare(const QStringList &args)
 {
-#ifdef DO_NOT_HAVE_COMMAND_LAUNCHER_JOB
+#ifdef USE_KDEINIT_EXE
     KToolInvocation::kdeinitExec(QLatin1String("bcompare"), args);
 #else
     auto *job = new KIO::CommandLauncherJob(QLatin1String("bcompare"), args);

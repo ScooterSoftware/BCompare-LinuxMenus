@@ -11,7 +11,11 @@ cmake -DTARGET_KDE6=OFF . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib
 make
 ```
 
+If the host building this plugin is targeting an old system, for example a debian 10, you should
+add the following option to cmake command line: `-DUSE_KDEINIT_EXE=ON`
+
 Generated plugin can be found in `bin/kf5/kfileitemaction/bcompare_ext_kde.so`
+
 It can be copied manually to `/usr/lib/qt/plugins/kf5/kfileitemaction/`
 
 ### Build for KDE6
@@ -22,6 +26,7 @@ make
 ```
 
 Generated plugin can be found in `bin/kf6/kfileitemaction/bcompare_ext_kde.so`
+
 It can be copied manually to `/usr/lib/qt6/plugins/kf6/kfileitemaction/`
 
 ### Install

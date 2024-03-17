@@ -29,15 +29,17 @@ include(FeatureSummary)
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
 # Check if KIO has CommandLauncherJob class
-set(HAVE_COMMAND_LAUNCHER_JOB ON)
 if(NOT TARGET_KDE6)
-    if(${KF5KIO_VERSION} VERSION_LESS "5.69.0")
-        set(HAVE_COMMAND_LAUNCHER_JOB OFF)
-    endif()
-endif()
+    set(USE_KDEINIT_EXE_DEFAULT OFF)
 
-if(NOT HAVE_COMMAND_LAUNCHER_JOB)
-    add_definitions(-DDO_NOT_HAVE_COMMAND_LAUNCHER_JOB=1)
+    if(${KF5KIO_VERSION} VERSION_LESS "5.69.0")
+        set(USE_KDEINIT_EXE_DEFAULT ON)
+    endif()
+    option(USE_KDEINIT_EXE "Launch bcompare using kdeinitExec" ${USE_KDEINIT_EXE_DEFAULT})
+
+    if(USE_KDEINIT_EXE)
+        add_definitions(-DUSE_KDEINIT_EXE=1)
+    endif()
 endif()
 
 add_definitions(-DQT_NO_CAST_TO_ASCII=1)

@@ -133,7 +133,7 @@ void BCompareKde::cbMerge()
  *************************************************************/
 
 QAction *BCompareKde::createMenuItem(const QString &txt, const QString &hint,
-                                      const QIcon &icon, void (BCompareKde::*callback)())
+                                     const QIcon &icon, void (BCompareKde::*callback)())
 {
     QAction *item = new QAction(this);
     item->setText(txt);
@@ -285,10 +285,9 @@ QAction *BCompareKde::createMenuItemCompareUsing(const CreateMenuCtx &ctx)
     {
         QList<QAction*> items;
 
-        const QStringList &viewers = m_config.listViewer();
-        for (int i = 0; i < viewers.size(); ++i)
+        for (const QString &viewer : m_config.listViewer())
         {
-            addItemToListIfNonNull(items, createSubMenuItemCompareUsing(viewers.at(i), ctx));
+            addItemToListIfNonNull(items, createSubMenuItemCompareUsing(viewer, ctx));
         }
 
         if (items.size() > 0)
@@ -422,7 +421,7 @@ BCompareKde::~BCompareKde()
 QList<QAction*> BCompareKde::actions(const KFileItemListProperties &fileItemInfos, QWidget *)
 {
     QList<QAction*> listActions;
-    KFileItemList selectedFiles = fileItemInfos.items();
+    const KFileItemList selectedFiles = fileItemInfos.items();
     int nbSelected = selectedFiles.size();
 
     m_config.reloadMenuConfig();
@@ -435,7 +434,7 @@ QList<QAction*> BCompareKde::actions(const KFileItemListProperties &fileItemInfo
 
     /* All the selected items must be considered of the same type */
     bool firstIsDir = isPathConsideredFolder(selectedFiles.at(0).url().path());
-    for (int i = 1; i < selectedFiles.size(); ++i)
+    for (int i = 1; i < nbSelected; ++i)
     {
         if (firstIsDir != isPathConsideredFolder(selectedFiles.at(i).url().path()))
         {

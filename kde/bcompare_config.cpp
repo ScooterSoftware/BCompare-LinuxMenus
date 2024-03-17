@@ -100,13 +100,13 @@ static bool getBoolSetting(const QSettings &settings, const char *key, bool defV
     {
         QString str(v.toString());
 
-        if (   str.compare(QLatin1String("True"), Qt::CaseInsensitive) == 0
-            || str == QLatin1String("1"))
+        if (   (str.compare(QLatin1String("True"), Qt::CaseInsensitive) == 0)
+            || (str == QLatin1String("1")) )
         {
             r = true;
         }
-        else if (!r || str == QLatin1String("0")
-                 || str.compare(QLatin1String("False"), Qt::CaseInsensitive) == 0)
+        else if (   (str.compare(QLatin1String("False"), Qt::CaseInsensitive) == 0)
+                 || (str == QLatin1String("0")) )
         {
             r = false;
         }
@@ -151,6 +151,18 @@ static QStringList archiveMaskToExt(const QStringList &listMask)
     }
 
     return listExt;
+}
+
+static QDateTime getFileModifiedTime(const QString &p)
+{
+    QFileInfo menuIniInfo(p);
+    menuIniInfo.refresh();
+
+    return menuIniInfo.lastModified(
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+        QTimeZone::UTC
+#endif
+    );
 }
 
 BCompareConfig::BCompareConfig() :
@@ -219,10 +231,7 @@ void BCompareConfig::reloadMenuConfig()
         return;
     }
 
-    QFileInfo menuIniInfo(m_menuIniPath);
-    menuIniInfo.refresh();
-    QDateTime menuIniModTime = menuIniInfo.lastModified();
-
+    QDateTime menuIniModTime = getFileModifiedTime(m_menuIniPath);
     if (menuIniModTime == m_menuIniDateTime)
     {
         return;

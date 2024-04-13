@@ -3,6 +3,22 @@
 ## Description
 Dolphin right-click plugin.
 
+## Prerequisites to build plugin
+
+### Prerequisites for KDE6
+
+For Ubuntu the following packages are necessary:
+
+```
+apt install qt6-base-dev kf6-kcoreaddons-dev kf6-ki18n-dev kf6-kio-dev
+```
+
+For Arch Linux the following packages are necessary:
+
+```
+pacman -S --needed kcoreaddons ki18n kio
+```
+
 ## Build and install
 ### Build for KDE5
 

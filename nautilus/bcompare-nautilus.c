@@ -3,15 +3,17 @@
 | Copyright (c) 1996-2024 Scooter Software, Inc.						|
 | All rights reserved.							www.scootersoftware.com	|
 \----------------------------------------------------------------------*/
+/*
+ * This code is for version nautilus/extensions-3
+ */
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
 #include <curses.h>
 #include <glib/gstdio.h>
+#include <gtk/gtk.h>
 
-#include <libnautilus-extension/nautilus-file-info.h>
-#include <libnautilus-extension/nautilus-menu-provider.h>
-#include <libnautilus-extension/nautilus-menu.h>
+#include <nautilus-extension.h>
 
 #define DIR_PERM (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)
 #define GBOOLEAN_TO_POINTER(i) (GINT_TO_POINTER ((i) ? 2 : 1))
@@ -27,7 +29,6 @@ typedef enum {
 
 typedef struct {
 	GObject parent_slot;
-	GtkWidget *Winder;
 	gboolean Enabled;
 	MenuTypes CompareMenuType;
 	MenuTypes CompareUsingMenuType;
@@ -71,19 +72,19 @@ static void setup_display(gpointer data)
 	char* pDisplayName = (char*)data;
 
 	if(strstr(pDisplayName, "wayland") != NULL)
-		g_setenv("WAYLAND_DISPLAY",pDisplayName, TRUE);
+		g_setenv("WAYLAND_DISPLAY", pDisplayName, TRUE);
 	else
 		g_setenv("DISPLAY", pDisplayName, TRUE);
 }
 
-static void spawn_bc(GtkWidget *window, char **argv)
+static void spawn_bc(char **argv)
 {
-	GdkScreen *screen = gtk_widget_get_screen(window);
+	GdkDisplay *gDisplay = gdk_display_get_default();
 	GError *error = NULL;
-	char *display;
+	char *display = NULL;
 
-	if (screen != NULL) {
-		display = gdk_screen_make_display_name(screen);
+	if (gDisplay != NULL) {
+		display = (char *)gdk_display_get_name(gDisplay);
 	} else {
 		display = NULL;
 	}
@@ -91,13 +92,10 @@ static void spawn_bc(GtkWidget *window, char **argv)
 	if (g_spawn_async(NULL, argv, NULL,
 			G_SPAWN_FILE_AND_ARGV_ZERO | G_SPAWN_SEARCH_PATH, 
 			setup_display, display, NULL, &error) != TRUE) {
-		GtkWindow *parent;
 		GtkMessageDialog *dialog;
 		gchar *cmd_line = g_strjoinv(" ", &argv[1]);
 
-		parent = GTK_WINDOW(gtk_widget_get_ancestor(window, GTK_TYPE_WINDOW));
-
-		dialog = (GtkMessageDialog *)gtk_message_dialog_new(parent,
+		dialog = (GtkMessageDialog *)gtk_message_dialog_new(NULL,
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR,
 					GTK_BUTTONS_CLOSE,
@@ -106,11 +104,10 @@ static void spawn_bc(GtkWidget *window, char **argv)
 
 	/* Destroy the dialog when the user responds to it (e.g. clicks a button) */
 		g_signal_connect_swapped(dialog, "response",
-				G_CALLBACK(gtk_widget_destroy), dialog);
-		gtk_widget_show_all(GTK_WIDGET(dialog));
+				G_CALLBACK(gtk_window_destroy), dialog);
+		gtk_widget_show(GTK_WIDGET(dialog));
 		g_error_free(error);
 	}
-	g_free(display);
 }
 
 static void clear_selections(BCompareExt *bcobj)
@@ -207,7 +204,7 @@ static void edit_file_action(BcMenuItem *item, BCompareExt *bcobj)
 	else argv[3] = "";
 	argv[4] = 0;
 
-	spawn_bc(bcobj->Winder, argv);
+	spawn_bc(argv);
 	clear_selections(bcobj);
 
 	if (edit_file != NULL) g_string_free(edit_file, TRUE);
@@ -242,7 +239,7 @@ static void compare_action(BcMenuItem *item, BCompareExt *bcobj)
 	else argv[cnt++] = "";
 	argv[cnt++] = 0;
 
-	spawn_bc(bcobj->Winder, argv);
+	spawn_bc(argv);
 	clear_selections(bcobj);
 
 	g_string_free(msg, TRUE);
@@ -271,7 +268,7 @@ static void sync_action(BcMenuItem *item, BCompareExt *bcobj)
 	else argv[4] = "";
 	argv[5] = 0;
 
-	spawn_bc(bcobj->Winder, argv);
+	spawn_bc(argv);
 	clear_selections(bcobj);
 
 	if (left_folder != NULL) g_string_free(left_folder, TRUE);
@@ -304,7 +301,7 @@ static void merge_action(BcMenuItem *item, BCompareExt *bcobj)
 	else argv[5] = "";
 	argv[6] = 0;
 
-	spawn_bc(bcobj->Winder, argv);
+	spawn_bc(argv);
 	clear_selections(bcobj);
 
 	if (left_file != NULL) g_string_free(left_file, TRUE);
@@ -670,7 +667,6 @@ static GList *beyondcompare_create_file_menus(
 
 static GList * beyondcompare_get_file_items(
 					NautilusMenuProvider *provider,
-					GtkWidget *window,
 					GList *files)
 {
 	BCompareExt *bcobj = (BCompareExt *)provider;
@@ -687,7 +683,6 @@ static GList * beyondcompare_get_file_items(
 	int SelectedCnt;
 
 	if ((provider == NULL) || (files == NULL) || (!bcobj->Enabled)) return NULL;
-	g_return_val_if_fail(GTK_IS_WIDGET(window), NULL);
 
 	FirstIsDir =
 		file_is_dir(bcobj, nautilus_to_path((NautilusFileInfo *)files->data));
@@ -756,7 +751,6 @@ static GList * beyondcompare_get_file_items(
 		}
 	}
 
-	bcobj->Winder = window;
 	ret = beyondcompare_create_dir_menus(
 			bcobj, SelectedCnt, FirstIsDir, MENU_SUBMENU);
 	tmp = beyondcompare_create_file_menus(
@@ -922,7 +916,7 @@ bcompare_ext_class_init(BCompareExtClass *class)
 /* Interface Init function */
 static void
 bcompare_menu_provider_init(
-		NautilusMenuProviderIface *iface)
+		NautilusMenuProviderInterface *iface)
 {
 	iface->get_file_items = beyondcompare_get_file_items;
 }

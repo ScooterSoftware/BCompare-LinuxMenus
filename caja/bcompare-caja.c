@@ -68,17 +68,22 @@ void caja_module_list_types(const GType **types, gint *n_types);
 
 static void setup_display(gpointer data)
 {
-	g_setenv("DISPLAY", (char *)data, TRUE);
+	char* pDisplayName = (char*)data;
+
+	if(strstr(pDisplayName, "wayland") != NULL)
+		g_setenv("WAYLAND_DISPLAY", pDisplayName, TRUE);
+	else
+		g_setenv("DISPLAY", pDisplayName, TRUE);
 }
 
 static void spawn_bc(GtkWidget *window, char **argv)
 {
-	GdkScreen *screen = gtk_widget_get_screen(window);
+	GdkDisplay *gDisplay = gtk_widget_get_display(window);
 	GError *error = NULL;
-	char *display;
+	char *display = NULL;
 
-	if (screen != NULL) {
-		display = gdk_screen_make_display_name(screen);
+	if (gDisplay != NULL) {
+		display = (char *)gdk_display_get_name(gDisplay);
 	} else {
 		display = NULL;
 	}
@@ -105,7 +110,6 @@ static void spawn_bc(GtkWidget *window, char **argv)
 		gtk_widget_show_all(GTK_WIDGET(dialog));
 		g_error_free(error);
 	}
-	g_free(display);
 }
 
 static void clear_selections(BCompareExt *bcobj)

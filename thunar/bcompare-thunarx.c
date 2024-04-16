@@ -811,16 +811,12 @@ bcompare_ext_init(BCompareExt *object)
 	gchar configdir[256];
 	gchar pathname[256];
 
-	env = g_getenv("HOME");
-	g_snprintf(configdir, 256, "%s/.beyondcompare", env);
-	if (!g_file_test(configdir, G_FILE_TEST_IS_DIR)) {
-		env = g_getenv("XDG_CONFIG_HOME");
-		if (env == NULL) {
-			env = g_getenv("HOME");
-			g_snprintf(configdir, 256, "%s/.config/bcompare", env);
-		}
-		else g_snprintf(configdir, 256, "%s/bcompare", env);
+	env = g_getenv("XDG_CONFIG_HOME");
+	if (env == NULL) {
+		env = g_getenv("HOME");
+		g_snprintf(configdir, 256, "%s/.config/bcompare5", env);
 	}
+	else g_snprintf(configdir, 256, "%s/bcompare5", env);
 
 	object->Enabled = FALSE;
 	object->ViewerCnt = 0;

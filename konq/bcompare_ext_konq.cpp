@@ -571,16 +571,12 @@ BCompareKonq::BCompareKonq(QObject *popupMenu, const QStringList &list)
 	char *env;
 	QString configdir;
    
-	env = getenv("HOME");
-	configdir = QString("%1/.beyondcompare").arg(env);
-	if (!QDir(configdir).exists()) {
-		env = getenv("XDG_CONFIG_HOME");
-		if (env == NULL) {
-			env = getenv("HOME");
-			configdir = QString("%1/.config/bcompare").arg(env);
-		}
-		else configdir = QString("%1/bcompare").arg(env);
+	env = getenv("XDG_CONFIG_HOME");
+	if (env == NULL) {
+		env = getenv("HOME");
+		configdir = QString("%1/.config/bcompare5").arg(env);
 	}
+	else configdir = QString("%1/bcompare5").arg(env);
 
 	QSettings MenuIni(QString("%1/menu.ini").arg(configdir),
 						QSettings::IniFormat);

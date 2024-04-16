@@ -14,6 +14,8 @@
 #include <libcaja-extension/caja-menu.h>
 
 #define DIR_PERM (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)
+#define GBOOLEAN_TO_POINTER(i) (GINT_TO_POINTER ((i) ? 2 : 1))
+#define GPOINTER_TO_BOOLEAN(i) ((gboolean) ((GPOINTER_TO_INT(i) == 2) ? TRUE : FALSE))
 
 typedef CajaMenuItem BcMenuItem;
 
@@ -52,18 +54,6 @@ typedef struct BCompareExtClass {
 static GType type_list[1];
 static GObjectClass *parent_class;
 
-typedef struct
-{
-  const gchar *name;
-  const gchar *icon;
-} BCompareStockIcon;
-
-static const BCompareStockIcon bcompare_stock_icons[] =
-{
-  { "bcompare_stock_full", "bcomparefull32",    },
-  { "bcompare_stock_half", "bcomparehalf32",       },
-};
-
 static void bcompare_ext_register_type(GTypeModule *module);
 void caja_module_initialize(GTypeModule *module);
 void caja_module_shutdown(void);
@@ -74,41 +64,6 @@ void caja_module_list_types(const GType **types, gint *n_types);
  * Utilities
  *
  *************************************************************/
-
-static void
-bcompare_stock_init (void)
-{
-  GtkIconFactory *icon_factory;
-  GtkIconSource  *icon_source;
-  GtkIconSet     *icon_set;
-  guint           n;
-
-  g_message("Init Stock Icons");
-
-  /* allocate a new icon factory for the thunar stock icons */
-  icon_factory = gtk_icon_factory_new ();
-
-  /* allocate an icon source */
-  icon_source = gtk_icon_source_new ();
-
-  /* register our stock icons */
-  for (n = 0; n < G_N_ELEMENTS (bcompare_stock_icons); ++n)
-	{
-	  /* setup the icon set */
-	  icon_set = gtk_icon_set_new ();
-	  gtk_icon_source_set_icon_name (icon_source, bcompare_stock_icons[n].icon);
-	  gtk_icon_set_add_source (icon_set, icon_source);
-	  gtk_icon_factory_add (icon_factory, bcompare_stock_icons[n].name, icon_set);
-	  gtk_icon_set_unref (icon_set);
-	}
-
-  /* register our icon factory as a default */
-  gtk_icon_factory_add_default (icon_factory);
-
-  /* cleanup */
-  g_object_unref (G_OBJECT (icon_factory));
-  gtk_icon_source_free (icon_source);
-}
 
 
 static void setup_display(gpointer data)
@@ -386,13 +341,13 @@ static BcMenuItem * select_left_mitem(
 	item = caja_menu_item_new("BCompareExt::select_left",
 							   MenuStr->str,
 							   HintStr->str,
-							   "bcompare_stock_half");
+							   "bcomparehalf32");
 
 	g_signal_connect(item, "activate",
 		G_CALLBACK (select_left_action), bcobj);
 	g_object_set_data(
 	(GObject*)item, "bcext::left_path", g_string_new(bcobj->RightFile->str));
-	g_object_set_data((GObject*)item, "bcext::is_dir", (gpointer)IsDir);
+	g_object_set_data((GObject*)item, "bcext::is_dir", GBOOLEAN_TO_POINTER(IsDir));
 
 	g_string_free(MenuStr, TRUE);
 	g_string_free(HintStr, TRUE);
@@ -408,7 +363,7 @@ static BcMenuItem * select_center_mitem(BCompareExt *bcobj)
 	item = caja_menu_item_new("BCompareExt::select_center",
 								  "Select Center File",
 								  "Remembers selected item for later comparison using Beyond Compare. Right-click another item to start the comparison",
-								  "bcompare_stock_half" /* icon name */);
+								  "bcomparehalf32" /* icon name */);
 
 	g_signal_connect(item, "activate",
 			G_CALLBACK (select_center_action), bcobj);
@@ -430,7 +385,7 @@ static BcMenuItem * edit_file_mitem(BCompareExt *bcobj)
 	item = caja_menu_item_new("BCompareExt::edit_file",
 								  MenuStr->str,
 				  "Edit the file using Beyond Compare",
-								  "bcompare_stock_full" /* icon name */);
+								  "bcomparefull32" /* icon name */);
 
 	g_signal_connect(item, "activate",
 			G_CALLBACK (edit_file_action), bcobj);
@@ -476,7 +431,7 @@ static BcMenuItem * compare_mitem(
 	item = caja_menu_item_new(NameStr->str,
 								  MenuStr->str,
 								  HintStr->str,
-								  "bcompare_stock_full" /* icon name */);
+								  "bcomparefull32" /* icon name */);
 	g_signal_connect(item, "activate",
 			G_CALLBACK (compare_action), bcobj);
 	g_object_set_data(
@@ -517,7 +472,7 @@ static BcMenuItem * sync_mitem(
 	item = caja_menu_item_new("BCompareExt::sync",
 								  MenuStr->str,
 								  HintStr->str,
-								  "bcompare_stock_full" /* icon name */);
+								  "bcomparefull32" /* icon name */);
 	g_signal_connect(item, "activate",
 			G_CALLBACK (sync_action), bcobj);
 	g_object_set_data(
@@ -583,7 +538,7 @@ static BcMenuItem * merge_mitem(
 	item = caja_menu_item_new("BCompareExt::merge",
 								  MenuStr->str,
 								  HintStr->str,
-								  "bcompare_stock_full" /* icon name */);
+								  "bcomparefull32" /* icon name */);
 	g_signal_connect(item, "activate",
 			G_CALLBACK(merge_action), bcobj);
 	g_object_set_data(
@@ -671,7 +626,7 @@ static GList *beyondcompare_create_file_menus(
 				item = caja_menu_item_new("BeyondCompareExt::compareusing",
 										"Compare using",
 										"Select viewer type for compare",
-										"bcompare_stock_full");
+										"bcomparefull32");
 				SubMenu = caja_menu_new();
 				caja_menu_item_set_submenu(item, SubMenu);
 
@@ -807,7 +762,7 @@ static GList * beyondcompare_get_file_items(
 		item = caja_menu_item_new("BeyondCompareExt::Top",
 								  "Beyond Compare",
 								  "Beyond Compare functions",
-								  "bcompare_stock_full");
+								  "bcomparefull32");
 		SubMenu = caja_menu_new();
 		caja_menu_item_set_submenu(item, SubMenu);
 
@@ -856,16 +811,12 @@ bcompare_ext_init(BCompareExt *object)
 	gchar configdir[256];
 	gchar pathname[256];
 
-	env = g_getenv("HOME");
-	g_snprintf(configdir, 256, "%s/.beyondcompare", env);
-	if (!g_file_test(configdir, G_FILE_TEST_IS_DIR)) {
-		env = g_getenv("XDG_CONFIG_HOME");
-		if (env == NULL) {
-			env = g_getenv("HOME");
-			g_snprintf(configdir, 256, "%s/.config/bcompare", env);
+	env = g_getenv("XDG_CONFIG_HOME");
+	if (env == NULL) {
+	  env = g_getenv("HOME");
+			g_snprintf(configdir, 256, "%s/.config/bcompare5", env);
 		}
-		else g_snprintf(configdir, 256, "%s/bcompare", env);
-	}
+	else g_snprintf(configdir, 256, "%s/bcompare5", env);
 
 	object->Enabled = FALSE;
 	object->ViewerCnt = 0;
@@ -1010,7 +961,6 @@ void
 caja_module_initialize(GTypeModule *module)
 {
 	bcompare_ext_register_type(module);
-	bcompare_stock_init();
 }
 
 void

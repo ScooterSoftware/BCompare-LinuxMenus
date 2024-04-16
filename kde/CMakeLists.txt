@@ -1,12 +1,68 @@
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
-find_package(KDE4 REQUIRED)
+# Configure the KDE version to build on
+option(TARGET_KDE6 "Target KDE6 instead of KDE5" ON)
+if(TARGET_KDE6)
+    cmake_minimum_required(VERSION 3.16)
+    set(QT_MAJOR_VERSION 6)
+    set(QT_MIN_VERSION "6.6.0")
+    set(KF_MIN_VERSION "6.0.0")
+else()
+    # Support at least Debian 10 buster
+    cmake_minimum_required(VERSION 3.13)
+    set(QT_MAJOR_VERSION 5)
+    set(QT_MIN_VERSION "5.11.0")
+    set(KF_MIN_VERSION "5.54.0")
+endif()
 
-set(CMAKE_REQUIRED_DEFINITIONS ${_KDE4_PLATFORM_DEFINITIONS})
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} ${KDE4_KPARTS_DEFINITIONS})
-include_directories (${QDBUS_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${KDE4_KPARTS_INCLUDES})
+project (bcompare_ext_kde)
 
-kde4_add_plugin(bcompare_ext_kde bcompare_ext_kde.cpp)
-target_link_libraries(bcompare_ext_kde ${KDE4_KIO_LIBS})
-install(TARGETS bcompare_ext_kde DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES bcompare_ext_kde.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+find_package(ECM ${KF_MIN_VERSION} REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS Core Widgets)
+find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS KIO I18n CoreAddons)
+
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDECompilerSettings)
+include(FeatureSummary)
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
+
+# Check if KIO has CommandLauncherJob class
+if(NOT TARGET_KDE6)
+    set(USE_KDEINIT_EXE_DEFAULT OFF)
+
+    if(${KF5KIO_VERSION} VERSION_LESS "5.69.0")
+        set(USE_KDEINIT_EXE_DEFAULT ON)
+    endif()
+    option(USE_KDEINIT_EXE "Launch bcompare using kdeinitExec" ${USE_KDEINIT_EXE_DEFAULT})
+
+    if(USE_KDEINIT_EXE)
+        add_definitions(-DUSE_KDEINIT_EXE=1)
+    endif()
+endif()
+
+add_definitions(-DQT_NO_CAST_TO_ASCII=1)
+add_definitions(-DQT_NO_CAST_FROM_BYTEARRAY=1)
+add_definitions(-DQT_NO_CAST_FROM_ASCII=1)
+add_definitions(-DTRANSLATION_DOMAIN="bcompare_ext_kde")
+
+if(TARGET_KDE6)
+    qt6_add_resources(bcompare_ext_kde_QRC bcompare_icon.qrc OPTIONS -no-compress)
+else()
+    qt5_add_resources(bcompare_ext_kde_QRC bcompare_icon.qrc OPTIONS -no-compress)
+endif()
+
+set(bcompare_ext_kde_SRCS
+    bcompare_ext_kde.cpp
+    bcompare_config.cpp
+    ${bcompare_ext_kde_QRC})
+
+kcoreaddons_add_plugin(bcompare_ext_kde
+                       SOURCES ${bcompare_ext_kde_SRCS}
+                       INSTALL_NAMESPACE "kf${QT_MAJOR_VERSION}/kfileitemaction")
+
+target_link_libraries(bcompare_ext_kde KF${QT_MAJOR_VERSION}::KIOWidgets
+                                       KF${QT_MAJOR_VERSION}::KIOGui KF${QT_MAJOR_VERSION}::I18n)
+
+ki18n_install(po)

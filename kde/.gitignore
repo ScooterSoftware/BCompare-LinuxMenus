@@ -1,6 +1,3 @@
-build/
-*kdev4*
-*.kate-swp
 scripts
 CMakeLists.txt.user
 CMakeFiles/

@@ -1,75 +1,88 @@
 /*
- *  Use for KDE 4.6.1 and later
+ * Copyright (c) 2018 Benjamin ROBIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
-#ifndef __BCOMPARE_KDE_H__
-#define __BCOMPARE_KDE_H__
 
-#include <Qt/qsignalmapper.h>
-#include <kabstractfileitemactionplugin.h>
-#include <kfileitemlistproperties.h>
+#ifndef BCOMPARE_EXT_KDE_H
+#define BCOMPARE_EXT_KDE_H
 
-typedef enum {
-	MENU_NONE = 0,
-	MENU_MAIN = 1,
-	MENU_SUBMENU = 2
-} MenuTypes;
+#include <KAbstractFileItemActionPlugin>
+#include <QList>
+#include "bcompare_config.h"
 
-class BCompareKde : public KAbstractFileItemActionPlugin {
-  Q_OBJECT
-  public:
+class BCompareKde : public KAbstractFileItemActionPlugin
+{
+    Q_OBJECT
+public:
     BCompareKde(QObject *pParent, const QVariantList &args);
     virtual ~BCompareKde();
 
     virtual QList<QAction*> actions(const KFileItemListProperties &fileItemInfos,
-				QWidget *parentWidget);
-  public slots:
-	void select_left_action(void);
-	void select_center_action(void);
-	void edit_file_action(void);
-	void compare_action(const QString &);
-	void sync_action(void);
-	void merge_action(void);
+                                    QWidget *parentWidget) Q_DECL_OVERRIDE;
 
-  protected:
-	void clear_selections(void);
-	bool file_is_dir(const char * path);
-	void alert_updated(void);
-	QAction *select_left_mitem(bool IsDir);
-	QAction *select_center_mitem(void);
-	QAction *edit_file_mitem(void);
-	QAction *compare_mitem(QString &FileViewer, 
-							int SelectedCnt);
-	QAction *sync_mitem(int SelectedCnt);
-	QAction *merge_mitem(int SelectedCnt);
-	void bcompare_create_dir_menus(QList<QAction*> *items,
-								   int SelectedCnt,
-								   bool FirstIsDir,
-								   MenuTypes CurrentMenuType);
-	void bcompare_create_file_menus(QList<QAction*> *items,
-									int SelectedCnt,
-									bool FirstIsDir,
-									MenuTypes CurrentMenuType);
+protected:
+    /* Action callbacks */
+    void cbSelectLeft();
+    void cbSelectCenter();
+    void cbEditFile();
+    void cbCompare();
+    void cbSync();
+    void cbMerge();
 
-  protected:
-	bool Enabled;
-	MenuTypes CompareMenuType;
-	MenuTypes CompareUsingMenuType;
-	MenuTypes MergeMenuType;
-	MenuTypes SyncMenuType;
-	MenuTypes EditMenuType;
-	QStringList Viewers;
-	QStringList Masks;
-	QString IconPath;
-	bool LeftIsDir;
-	KUrl LeftFile;
-	KUrl RightFile;
-	KUrl CenterFile;
-	KUrl StorageDir;
-	KUrl LeftFileStorage;
-	KUrl CenterFileStorage;
-	QSignalMapper *mapper;
-	QWidget *parent;
+    /* Utilities */
+    bool isPathConsideredFolder(const QString &path) const;
+    void clearSelections();
 
+    /* Menu Items */
+    QAction *createMenuItem(const QString &txt, const QString &hint,
+                            const QIcon &icon, void (BCompareKde::*callback)());
+
+    struct CreateMenuCtx {
+        bool isDir;
+        int nbSelected;
+        BCompareConfig::MenuTypes menuType;
+    };
+
+    QAction *createMenuItemSelectLeft(const CreateMenuCtx &ctx);
+    QAction *createMenuItemSelectCenter(const CreateMenuCtx &ctx);
+    QAction *createMenuItemEdit(const CreateMenuCtx &ctx);
+    QAction *createMenuItemCompare(const CreateMenuCtx &ctx);
+    QAction *createSubMenuItemCompareUsing(const QString &fileViewer, const CreateMenuCtx &ctx);
+    QAction *createMenuItemCompareUsing(const CreateMenuCtx &ctx);
+    QAction *createMenuItemSync(const CreateMenuCtx &ctx);
+    QAction *createMenuItemMerge(const CreateMenuCtx &ctx);
+
+    void createMenus(QList<QAction*> &items, const CreateMenuCtx &ctx);
+
+protected:
+    /** A reference to the global configuration */
+    BCompareConfig &m_config;
+
+    /** The path of the selected left file */
+    QString m_pathLeftFile;
+
+    /** The path of the selected center file */
+    QString m_pathCenterFile;
+
+    /** The path of the selected right file */
+    QString m_pathRightFile;
 };
 
-#endif //__BCOMPARE_KDE_H__
+#endif // BCOMPARE_EXT_KDE_H

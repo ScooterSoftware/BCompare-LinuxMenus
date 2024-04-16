@@ -86,59 +86,10 @@ private:
 
 /****************************************************/
 
-const BCompareConfig& BCompareConfig::get()
+BCompareConfig& BCompareConfig::get()
 {
     static BCompareConfig m_cfg;
     return m_cfg;
-}
-
-static bool isFileExists(const QString &path)
-{
-    QFileInfo fInfo(path);
-    return fInfo.exists() && fInfo.isFile();
-}
-
-static QStringList getListConfigDirToCheck()
-{
-    QStringList listDir;
-
-    QDir homeDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-    QDir configDir(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation));
-
-    QString configPath1 = configDir.absoluteFilePath(QLatin1String("bcompare"));
-    QString configPath2 = homeDir.absoluteFilePath(QLatin1String(".config/bcompare"));
-
-    listDir.append(homeDir.absoluteFilePath(QLatin1String(".beyondcompare")));
-    listDir.append(configPath1);
-    if (configPath1 != configPath2)
-    {
-        listDir.append(configPath2);
-    }
-
-    return listDir;
-}
-
-static QDir findMenuConfigPath(QString &menuIniPath)
-{
-    QStringList listDir = getListConfigDirToCheck();
-    QString menuIniFileName(QLatin1String("menu.ini"));
-
-    for (int i = 0; i < listDir.size(); ++i)
-    {
-        QDir cfgDir(listDir.at(i));
-        if (cfgDir.exists())
-        {
-            QString cfgPath(cfgDir.absoluteFilePath(menuIniFileName));
-            if (isFileExists(cfgPath))
-            {
-                menuIniPath = cfgPath;
-                return cfgDir;
-            }
-        }
-    }
-
-    menuIniPath = QString();
-    return QDir();
 }
 
 static bool getBoolSetting(const QSettings &settings, const char *key, bool defVal)
@@ -149,13 +100,13 @@ static bool getBoolSetting(const QSettings &settings, const char *key, bool defV
     {
         QString str(v.toString());
 
-        if (   str.compare(QLatin1String("True"), Qt::CaseInsensitive) == 0
-            || str == QLatin1String("1"))
+        if (   (str.compare(QLatin1String("True"), Qt::CaseInsensitive) == 0)
+            || (str == QLatin1String("1")) )
         {
             r = true;
         }
-        else if (!r || str == QLatin1String("0")
-                 || str.compare(QLatin1String("False"), Qt::CaseInsensitive) == 0)
+        else if (   (str.compare(QLatin1String("False"), Qt::CaseInsensitive) == 0)
+                 || (str == QLatin1String("0")) )
         {
             r = false;
         }
@@ -187,44 +138,133 @@ static BCompareConfig::MenuTypes getMenuTypeSetting(const QSettings &settings, c
     return r;
 }
 
+static QStringList archiveMaskToExt(const QStringList &listMask)
+{
+    QStringList listExt;
+
+    for (const QString &mask : listMask)
+    {
+        if (mask.startsWith(QLatin1Char('*')))
+        {
+            listExt.append(mask.mid(1));
+        }
+    }
+
+    return listExt;
+}
+
+static QDateTime getFileModifiedTime(const QString &p)
+{
+    QFileInfo menuIniInfo(p);
+    menuIniInfo.refresh();
+
+    return menuIniInfo.lastModified(
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+        QTimeZone::UTC
+#endif
+    );
+}
+
 BCompareConfig::BCompareConfig() :
     m_menuEnabled(false), m_menuCompare(MENU_NONE), m_menuCompareUsing(MENU_NONE),
     m_menuMerge(MENU_NONE), m_menuSync(MENU_NONE), m_menuEdit(MENU_NONE),
     m_icons(new BCompareIconCache())
 {
-    QString menuIniPath;
-    QDir cfgDir = findMenuConfigPath(menuIniPath);
+    findMenuConfigPath();
+}
 
-    if (!menuIniPath.isEmpty())
+/*
+ * Beyond Compare 4 looks for config in these directories in this order:
+ *  - $HOME/.beyondcompare4
+ *  - $HOME/.beyondcompare
+ *  - $XDG_CONFIG_HOME/bcompare4
+ *  - $XDG_CONFIG_HOME/bcompare (default)
+ *
+ * Beyond Compare 5 looks for config in these directories in this order:
+ *  - $HOME/.beyondcompare5
+ *  - $XDG_CONFIG_HOME/bcompare5 (default)
+ *
+ * There is no easy way to check which version of beyond compare is used/installed.
+ * So first check for version 5, then check for version 4.
+ */
+void BCompareConfig::findMenuConfigPath()
+{
+    QStringList listDir;
+    QDir homeDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+    QDir configDir(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation));
+
+    listDir.append(homeDir.absoluteFilePath(QLatin1String(".beyondcompare5")));
+    listDir.append(configDir.absoluteFilePath(QLatin1String("bcompare5")));
+
+    listDir.append(homeDir.absoluteFilePath(QLatin1String(".beyondcompare4")));
+    listDir.append(homeDir.absoluteFilePath(QLatin1String(".beyondcompare")));
+    listDir.append(configDir.absoluteFilePath(QLatin1String("bcompare4")));
+    listDir.append(configDir.absoluteFilePath(QLatin1String("bcompare")));
+
+    QString menuIniFileName(QLatin1String("menu.ini"));
+    QMutexLocker lock(&m_mutex);
+
+    for (const QString &d : listDir)
     {
-        QSettings menuSettings(menuIniPath, QSettings::IniFormat);
-        menuSettings.beginGroup(QLatin1String("ContextMenus"));
-
-        m_menuEnabled = getBoolSetting(menuSettings, "Enabled", false);
-        if (m_menuEnabled)
+        QDir cfgDir(d);
+        if (cfgDir.exists())
         {
-            m_menuCompare      = getMenuTypeSetting(menuSettings, "Compare",      MENU_NONE);
-            m_menuCompareUsing = getMenuTypeSetting(menuSettings, "CompareUsing", MENU_NONE);
-            m_menuMerge        = getMenuTypeSetting(menuSettings, "Merge",        MENU_NONE);
-            m_menuSync         = getMenuTypeSetting(menuSettings, "Sync",         MENU_NONE);
-            m_menuEdit         = getMenuTypeSetting(menuSettings, "Edit",         MENU_NONE);
+            QString cfgPath(cfgDir.absoluteFilePath(menuIniFileName));
+            if (QFileInfo::exists(cfgPath))
+            {
+                m_menuIniPath = cfgPath;
+                m_leftFileSavePath = cfgDir.absoluteFilePath(QLatin1String("left_file"));
+                m_centerFileSavePath = cfgDir.absoluteFilePath(QLatin1String("center_file"));
+            }
 
-            m_listArchiveExt = menuSettings.value(QLatin1String("ArchiveMasks")).toStringList();
-            m_listViewer     = menuSettings.value(QLatin1String("Viewers")).toStringList();
-
-            m_pathSaveLeftFilePath = cfgDir.absoluteFilePath(QLatin1String("left_file"));
-            m_pathSaveCenterFilePath = cfgDir.absoluteFilePath(QLatin1String("center_file"));
+            break;
         }
-
-        menuSettings.endGroup();
     }
+}
+
+void BCompareConfig::reloadMenuConfig()
+{
+    QMutexLocker lock(&m_mutex);
+
+    if (m_menuIniPath.isEmpty())
+    {
+        return;
+    }
+
+    QDateTime menuIniModTime = getFileModifiedTime(m_menuIniPath);
+    if (menuIniModTime == m_menuIniDateTime)
+    {
+        return;
+    }
+
+    m_menuIniDateTime = menuIniModTime;
+
+    QSettings menuSettings(m_menuIniPath, QSettings::IniFormat);
+    menuSettings.beginGroup(QLatin1String("ContextMenus"));
+
+    m_menuEnabled = getBoolSetting(menuSettings, "Enabled", false);
+    if (m_menuEnabled)
+    {
+        m_menuCompare      = getMenuTypeSetting(menuSettings, "Compare",      MENU_NONE);
+        m_menuCompareUsing = getMenuTypeSetting(menuSettings, "CompareUsing", MENU_NONE);
+        m_menuMerge        = getMenuTypeSetting(menuSettings, "Merge",        MENU_NONE);
+        m_menuSync         = getMenuTypeSetting(menuSettings, "Sync",         MENU_NONE);
+        m_menuEdit         = getMenuTypeSetting(menuSettings, "Edit",         MENU_NONE);
+
+        m_listArchiveExt = archiveMaskToExt(
+            menuSettings.value(QLatin1String("ArchiveMasks")).toStringList());
+
+        m_listViewer = menuSettings.value(QLatin1String("Viewers")).toStringList();
+    }
+
+    menuSettings.endGroup();
 }
 
 bool BCompareConfig::isFileArchive(const QString &pathFile) const
 {
-    for (int i = 0; i < m_listArchiveExt.size(); ++i)
+    for (const QString &ext : m_listArchiveExt)
     {
-        if (pathFile.endsWith(m_listArchiveExt.at(i).midRef(1)))
+        if (pathFile.endsWith(ext))
         {
             return true;
         }
@@ -235,11 +275,15 @@ bool BCompareConfig::isFileArchive(const QString &pathFile) const
 static QString readPathInFile(const QString &pathStorage)
 {
     QString r;
-    QFile f(pathStorage);
-    if (f.open(QIODevice::ReadOnly | QIODevice::Text))
+
+    if (!pathStorage.isEmpty())
     {
-        r = QString::fromUtf8(f.readLine().trimmed());
-        f.close();
+        QFile f(pathStorage);
+        if (f.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            r = QString::fromUtf8(f.readLine().trimmed());
+            f.close();
+        }
     }
 
     return r;
@@ -247,43 +291,46 @@ static QString readPathInFile(const QString &pathStorage)
 
 static void savePathToFile(const QString &pathStorage, const QString &pathToSave)
 {
-    QFile f(pathStorage);
-    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+    if (!pathStorage.isEmpty())
     {
-        f.write(pathToSave.toUtf8());
-        f.write("\n");
-        f.close();
+        QFile f(pathStorage);
+        if (f.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+        {
+            f.write(pathToSave.toUtf8());
+            f.write("\n");
+            f.close();
+        }
     }
 }
 
 QString BCompareConfig::readPathLeftFile() const
 {
-    return readPathInFile(m_pathSaveLeftFilePath);
+    return readPathInFile(m_leftFileSavePath);
 }
 
 void BCompareConfig::savePathLeftFile(const QString &path) const
 {
-    savePathToFile(m_pathSaveLeftFilePath, path);
+    savePathToFile(m_leftFileSavePath, path);
 }
 
 void BCompareConfig::forgetLeftFile() const
 {
-    QFile::remove(m_pathSaveLeftFilePath);
+    QFile::remove(m_leftFileSavePath);
 }
 
 QString BCompareConfig::readPathCenterFile() const
 {
-    return readPathInFile(m_pathSaveCenterFilePath);
+    return readPathInFile(m_centerFileSavePath);
 }
 
 void BCompareConfig::savePathCenterFile(const QString &path) const
 {
-    savePathToFile(m_pathSaveCenterFilePath, path);
+    savePathToFile(m_centerFileSavePath, path);
 }
 
 void BCompareConfig::forgetCenterFile() const
 {
-    QFile::remove(m_pathSaveCenterFilePath);
+    QFile::remove(m_centerFileSavePath);
 }
 
 const QIcon& BCompareConfig::iconEdit() const

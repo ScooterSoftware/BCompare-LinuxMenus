@@ -1,3 +1,4 @@
+# Makefile for version nautilus/extensions-4
 # bcompare-ext-nautilus needs (tested on Ubuntu 10.10)
 #  sudo apt-get install libglib2.0-dev
 #  sudo apt-get install libncurses5-dev
@@ -14,7 +15,8 @@ FLAGS_64= -m64
 WFLAGS=-Wall -Wmissing-prototypes
 CFLAGS= $(WFLAGS) $(AFLAGS) -fPIC -g \
 	$(shell pkg-config --cflags glib-2.0) \
-	$(shell pkg-config --cflags libnautilus-extension)
+	$(shell pkg-config --cflags libnautilus-extension-4) \
+	$(shell pkg-config --cflags gtk4)
 LDFLAGS=-shared $(AFLAGS)
 
 all: ext32 ext64

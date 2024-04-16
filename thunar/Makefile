@@ -2,7 +2,7 @@
 #   sudo apt-get install libglib2.0-dev
 #   sudo apt-get install libthunar-vfs-1-dev
 #   sudo apt-get install libncurses5-dev
-#   sudo apt-get install libthunar-2-dev
+#   sudo apt-get install libthunarx-3-dev
 
 EXT_NAME=bcompare-ext-thunarx
 SOURCES=bcompare-thunarx.c

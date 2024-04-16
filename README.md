@@ -25,4 +25,4 @@ you.
 <support@scootersoftware.com>  
 <http://www.scootersoftware.com/>
 
-Copyright (c) 1996-2015 Scooter Software, Inc.
+Copyright (c) 1996-2024 Scooter Software, Inc.

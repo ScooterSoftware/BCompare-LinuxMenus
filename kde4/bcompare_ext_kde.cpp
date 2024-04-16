@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------\
 | Beyond Compare (tm)													|
-| Copyright (c) 1996-2015 Scooter Software, Inc.						|
+| Copyright (c) 1996-2024 Scooter Software, Inc.						|
 | All rights reserved.							www.scootersoftware.com	|
 \----------------------------------------------------------------------*/
 #include <Qt/qsettings.h>

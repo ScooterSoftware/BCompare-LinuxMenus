@@ -13,6 +13,12 @@ For Ubuntu the following packages are necessary:
 apt install qt6-base-dev kf6-kcoreaddons-dev kf6-ki18n-dev kf6-kio-dev
 ```
 
+You may find in kubuntu 24.10 onwards the library names are different, in which case use:
+
+```
+apt install qt6-base-dev libkf6coreaddons-dev libkf6i18n-dev libkf6kio-dev
+```
+
 For Arch Linux the following packages are necessary:
 
 ```

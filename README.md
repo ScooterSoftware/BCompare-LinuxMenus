@@ -16,7 +16,7 @@ Konqueror, Nautilus, and Thunar are all currently supported.  Tested Linux distr
 
 ### Plug-in Documentation
 * KDE: <https://techbase.kde.org/Development/Tutorials/Services/Plugins>
-* Gnome: <https://developer.gnome.org/libnautilus-extension/>
+* Gnome: <https://gnome.pages.gitlab.gnome.org/nautilus/>
 
 ### Contact Info
 If you have any questions, comments or suggestions, we would like to hear from

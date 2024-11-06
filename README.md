@@ -15,8 +15,11 @@ Konqueror, Nautilus, and Thunar are all currently supported.  Tested Linux distr
 * Debian 7, 8
 
 ### Plug-in Documentation
-* KDE: <https://techbase.kde.org/Development/Tutorials/Services/Plugins>
-* Gnome: <https://gnome.pages.gitlab.gnome.org/nautilus/>
+* KDE:  
+  <https://techbase.kde.org/Development/Tutorials/Services/Plugins>
+* Gnome:  
+    <https://github.com/GNOME/nautilus#extensions>  
+    <https://gnome.pages.gitlab.gnome.org/nautilus/>        
 
 ### Contact Info
 If you have any questions, comments or suggestions, we would like to hear from
